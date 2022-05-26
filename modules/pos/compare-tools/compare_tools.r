@@ -58,30 +58,31 @@ miRNA_bed.df <- miRNA_bed.df %>%  mutate(miRNA_ID = str_c(miRNA_bed.df$mir,
 miRNA_bed.df <-miRNA_bed.df %>%  select(chrom, miRNA_ID) %>% unique()
 
 targetscan_by_chrom.df <- inner_join(targetscan.df, miRNA_bed.df, by = "miRNA_ID") %>% 
-  select(GeneID, miRNA_ID, UTR_start, UTR_end, Site_type, chrom)
+  select(a_Gene_ID, miRNA_ID, UTR_start, UTR_end, Site_type, chrom)
 
 mirmap_by_chrom.df <- inner_join(mirmap.df, miRNA_bed.df, by = "miRNA_ID")
 
+names(mirmap_by_chrom.df)[1] <- "a_Gene_ID"
 
-targetscan_by_chrom.df <- targetscan_by_chrom.df %>%  mutate( target_ID = str_c(targetscan_by_chrom.df$GeneID,
-                                                      ";",
-                                                      targetscan_by_chrom.df$miRNA_ID,
-                                                      ";",
-                                                      targetscan_by_chrom.df$UTR_start,
-                                                      ";",
-                                                      targetscan_by_chrom.df$UTR_end,
-                                                      ";",
-                                                      targetscan_by_chrom.df$Site_type))
-
-
-mirmap_by_chrom.df <- mirmap_by_chrom.df %>%  mutate( target_ID = str_c(mirmap_by_chrom.df$GeneID,
+targetscan_by_chrom.df <- targetscan_by_chrom.df %>%  mutate( target_ID = str_c(targetscan_by_chrom.df$a_Gene_ID,
                                                                                 ";",
+                                                                                targetscan_by_chrom.df$miRNA_ID,
+                                                                                ";",
+                                                                                targetscan_by_chrom.df$UTR_start,
+                                                                                ";",
+                                                                                targetscan_by_chrom.df$UTR_end,
+                                                                                ";",
+                                                                                targetscan_by_chrom.df$Site_type))
+
+
+mirmap_by_chrom.df <- mirmap_by_chrom.df %>%  mutate( target_ID = str_c(mirmap_by_chrom.df$a_Gene_ID,
+                                                                        ";",
                                                                         mirmap_by_chrom.df$miRNA_ID,
-                                                                                ";",
+                                                                        ";",
                                                                         mirmap_by_chrom.df$UTR_start,
-                                                                                ";",
+                                                                        ";",
                                                                         mirmap_by_chrom.df$UTR_end,
-                                                                                ";",
+                                                                        ";",
                                                                         mirmap_by_chrom.df$Site_type))
 
 
@@ -111,6 +112,7 @@ ggsave( filename =str_interp("${output_Name}.png"),
 
 ## Get mirna targets present in both tools
 targets_intersect.df <- intersect(targetscan_by_chrom.df, mirmap_by_chrom.df)
+intersect(targetscan_by_chrom.df, mirmap_by_chrom.df) %>% pull() %>%  length()
 
 ##Get miRNA targets ids that differ
 mirmap_differ.df <- mirmap_by_chrom.df %>% setdiff(targetscan_by_chrom.df)
@@ -125,13 +127,13 @@ targetscan_differ.df <- targetscan_differ.df %>%  mutate(prediction_tool = "targ
 
 ## Merge the miRNA targets ids that differ into a single dataframe
 targets_differ.df <- full_join(x = mirmap_differ.df, y = targetscan_differ.df,
-                           by = c("GeneID", "miRNA_ID", "UTR_start",
-                                  "UTR_end",  "Site_type", "chrom", 
-                                  "target_ID", "prediction_tool") )
+                               by = c("a_Gene_ID", "miRNA_ID", "UTR_start",
+                                      "UTR_end",  "Site_type", "chrom", 
+                                      "target_ID", "prediction_tool") )
 
 ## Merge all miRNA targets ids into a single dataframe
 All_targets.df <- full_join(x = targets_intersect.df, y = targets_differ.df,
-                            by = c("GeneID", "miRNA_ID", "UTR_start",
+                            by = c("a_Gene_ID", "miRNA_ID", "UTR_start",
                                    "UTR_end",  "Site_type", "chrom", 
                                    "target_ID", "prediction_tool") )
 

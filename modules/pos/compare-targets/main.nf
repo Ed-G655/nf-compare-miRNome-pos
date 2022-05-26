@@ -46,22 +46,21 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 /* PRE1_CONVERT_GFF_TO_BED */
 
 process COMPARE_TARGETS {
-	tag "$REF, $ALT"
+	tag "$CHR"
 
 	publishDir "${results_dir}/compare-targets/",mode:"copy"
 
 	input:
-	file REF
-	file ALT
-  file Rscript
+	tuple val(CHR), file (REF), file(ALT)
+  each Rscript
 
 	output:
-	file "targets.changes.tsv"
+	path("*.tsv"), emit: CHANGES
 	file "*.png"
 
 	shell:
 	"""
-  Rscript --vanilla compare_targets.r ${REF}  ${ALT} targets.changes
+  Rscript --vanilla ${Rscript} ${REF} ${ALT} ${CHR}.changes
 
 	"""
 	stub:

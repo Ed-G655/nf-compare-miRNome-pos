@@ -13,9 +13,9 @@ args = commandArgs(trailingOnly=TRUE)
 ## Uncomment For debugging only
 ## Comment for production mode only
 
-#args[1] <-"targets.ref.tsv"
+#args[1] <-"22.alt.tsv"
 
-#args[2] <- "targets.alt.tsv"
+#args[2] <- "22.ref.tsv"
 
 #args[3] <- "targets.changes" # output file
 
@@ -68,13 +68,13 @@ remained_targets.df <- remained_targets.df  %>%
 
 ## Merge the miRNA targets gained and lost into a single dataframe
 target_changes.df <- full_join(x = lost_targets, y = gain_targets,
-                               by = c("GeneID","miRNA_ID", "UTR_start",
+                               by = c("a_Gene_ID","miRNA_ID", "UTR_start",
                                       "UTR_end", "Site_type", "target", "target_ID",
                                       "chrom") )
 
 ## Merge all miRNA targets ids into a single dataframe
 All_targets.df <- full_join(x = target_changes.df, y = remained_targets.df,
-                            by = c("GeneID","miRNA_ID", "UTR_start",
+                            by = c("a_Gene_ID","miRNA_ID", "UTR_start",
                                    "UTR_end", "Site_type", "target", "target_ID", 
                                    "chrom") )
 
@@ -82,101 +82,6 @@ All_targets.df <- full_join(x = target_changes.df, y = remained_targets.df,
 write.table(All_targets.df, file = str_interp("${mirna_changes}.tsv"), sep = "\t", na = "NA", quote = F, row.names = F)
 
 
-
-
-
-
-## Make a vector with the mirnas targets predicted by both tools
-mirna_ref_intersect.v <- All_targets.df %>% filter(target ==  "lost" | 
-                                                   target ==  "remained" ) %>% pull(target_ID)
-
-mirna_alt_intersect.v <- All_targets.df %>% filter(target ==  "gained" | 
-                                                     target ==  "remained" ) %>% pull(target_ID)
-
-## Sort the ids list within a list for ggvenn
-Venn_list <- list(
-  A = mirna_ref_intersect.v,
-  B = mirna_alt_intersect.v)
-
-## Name the source of the ids
-names(Venn_list) <- c("miRNAs REF","miRNAs ALT")
-
-## Ṕlot a Venn diagram
-miRNAs_Venn.p <- ggvenn(Venn_list, fill_color = c("#FF595E", "#007F5F"),
-                        stroke_size = 0.5, set_name_size = 4 , text_size = 4)
-
-## Save plot
-ggsave( filename = str_interp("${mirna_changes}.png"),
-        plot = miRNAs_Venn.p,
-        device = "png",
-        height = 7, width = 14,
-        units = "in")
-
-## Make eulerr plot
-microRNAs_euler <- euler(Venn_list)
-
-microRNAs_euler.p <- plot( x = microRNAs_euler,
-                           quantities = TRUE,               
-                           main = "microRNAS iDs",
-                           fill = c("#FF595E", "#007F5F") )                 
-
-# save plot
-ggsave( filename = str_interp("${mirna_changes}_2.png"),        
-        plot = microRNAs_euler.p,                
-        device = "png",                 
-        height = 7,                     
-        width = 14,
-        units = "in",
-        dpi = 300 )                    
-
-
-## Select mirnas targets predicted by TargetScan
-mirna_ref_targetscan.df <- mirna_ref.df %>% filter(prediction_tool ==  "targetscan" | 
-                                                     prediction_tool == "both") %>% select(target_ID)
-
-mirna_mut_targetscan.df <- mirna_alt.df %>% filter(prediction_tool ==  "targetscan" |
-                                                     prediction_tool == "both") %>% select(target_ID)
-
-
-## Select mirnas targets predicted by mirmap
-mirna_ref_mirmap.df <- mirna_ref.df %>% filter(prediction_tool ==  "mirmap" | 
-                                                 prediction_tool == "both") %>% select(target_ID)
-
-mirna_mut_mirmap.df <- mirna_alt.df %>% filter(prediction_tool ==  "mirmap" |
-                                                 prediction_tool == "both") %>% select(target_ID)
-
-
-
-## Make a vector with the mirnas targets predicted by both tools
-mirna_ref_targetscan.v <- mirna_ref_targetscan.df %>%  pull(target_ID) %>%  unique()
-
-mirna_ref_mirmap.v <- mirna_ref_mirmap.df %>%  pull(target_ID) %>%  unique()
-
-mirna_mut_targetscan.v <- mirna_mut_targetscan.df %>%  pull(target_ID) %>%  unique()
-
-mirna_mut_mirmap.v <- mirna_mut_mirmap.df %>%  pull(target_ID) %>%  unique()
-
-## Sort the ids list within a list for ggvenn
-Venn_list <- list(
-  A = mirna_ref_targetscan.v,
-  B = mirna_ref_mirmap.v,
-  C = mirna_mut_targetscan.v,
-  D = mirna_mut_mirmap.v)
-
-## Name the source of the ids
-names(Venn_list) <- c("REF_TargetScan","REF_miRmap","MUT_TargetScan","MUT_miRmap")
-
-## Ṕlot a Venn diagram
-miRNAs_Venn.p <- ggvenn(Venn_list, fill_color = c("#D9ED92", "#99D98C", "#168AAD", "#1E6091"),
-                        stroke_size = 0.5, set_name_size = 4 , text_size = 4)
-
-
-## Save plot
-ggsave( filename = str_interp("${mirna_changes}_3.png"),
-        plot = miRNAs_Venn.p,
-        device = "png",
-        height = 7, width = 15,
-        units = "in")
 
 count_changes.df <- All_targets.df %>% group_by(miRNA_ID, chrom, target) %>%
   summarise(Number_of_Targets = n())
@@ -244,4 +149,3 @@ ggsave( filename =str_interp("${chroms}_barplot.png"),
         height = 14, width = 28,
         units = "in")
 })
-

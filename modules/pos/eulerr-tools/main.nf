@@ -10,7 +10,7 @@ The Aguilar Lab presents...
    with targetscan and miRmap.
 
 ==================================================================
-Version: 0.1
+Version: 0.2
 Project repository:
 ==================================================================
 Authors:
@@ -43,30 +43,23 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 
 /* MODULE START */
 
-/* PRE1_CONVERT_GFF_TO_BED */
+process EULERR_MIRNOME {
+	tag "$REF, $ALT"
 
-process COMPARE_TARGETS_TOOLS {
-	tag "$CHR"
-
-	publishDir "${intermediates_dir}/compare-tools/",mode:"symlink"
+	publishDir "${results_dir}/compare-miRNome/", mode:"copy"
 
 	input:
-	tuple val(CHR), file(TSOUT), file(MIRMAP)
-	each BED
-  each Rscript
+	file REF
+	file ALT
+  file Rscript
 
 	output:
-	file "*.png"
-	tuple val(CHR), path("*.tsv"), emit: TSV
+	file "*"
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript} ${TSOUT} ${MIRMAP} ${BED} ${CHR}${params.output_name}
+	  Rscript --vanilla ${Rscript} ${REF} ${ALT} miRNome
 
-	"""
-	stub:
-	"""
-	      touch  targets.${params.output_name}.tsv
-				touch  targets.${params.output_name}.png
-	"""
+ 	"""
+
 }

@@ -6,11 +6,11 @@
 /*================================================================
 The Aguilar Lab presents...
 
-- A pipeline to classify SNPs in microRNA regions and provide an overview of
-diseases associated with microRNAs that present SNPs
+- A pipeline to extract and create miRNA and 3'UTR consensus sequences for analysis
+   with targetscan and miRmap.
 
 ==================================================================
-Version: 0.1
+Version: 0.2
 Project repository:
 ==================================================================
 Authors:
@@ -32,7 +32,6 @@ Authors:
   Define pipeline Name
   This will be used as a name to include in the results and intermediates directory names
 */
-
 pipeline_name = "nf-compare-miRNome"
 
 /*This directories will be automatically created by the pipeline to store files during the run
@@ -44,28 +43,24 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 
 /* MODULE START */
 
+/* PRE1_CONVERT_GFF_TO_BED */
 
-process CAT_TARGETSCAN {
-	tag "$TSOUT"
+process COMPARE_MIRNOME {
+	tag "$TARGETS"
 
-	publishDir "${results_dir}/cat-targets/",mode:"copy"
+	publishDir "${results_dir}/compare-miRNome/", mode:"copy"
 
 	input:
-	file TSOUT
+	file TARGETS
+  file Rscript
 
 	output:
-	file "${params.output_name}"
+	file "*"
 
 	shell:
-  """
-	cat *.tsout \
-	| grep -P -v "a_Gene_ID\tmiRNA_ID\tspecies_ID\tMSA_start\tMSA_end\tUTR_start\tUTR_end\tGroup_num\tSite_type\tmiRNA in this species\tGroup_type\tSpecies_in_this_group\tSpecies_in_this_group_with_this_site_type\tORF_overlap" > all.tmp
-	echo "GeneID\tmiRNA_ID\tspecies_ID\tMSA_start\tMSA_end\tUTR_start\tUTR_end\tGroup_num\tSite_type\tmiRNA in this species\tGroup_type\tSpecies_in_this_group\tSpecies_in_this_group_with_this_site_type\tORF_overlap" > header.txt
-	cat header.txt all.tmp | cut -f 1,2,6,7,9 > ${params.output_name}
+	"""
+  Rscript --vanilla ${Rscript} ${TARGETS} All_changes
 
 	"""
-	stub:
-	"""
-	     touch ${params.output_name}
-	"""
+
 }

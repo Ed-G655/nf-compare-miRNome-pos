@@ -6,8 +6,8 @@
 /*================================================================
 The Aguilar Lab presents...
 
-- A pipeline to extract and create miRNA and 3'UTR consensus sequences for analysis
-   with targetscan and miRmap.
+- A pipeline to classify SNPs in microRNA regions and provide an overview of
+diseases associated with microRNAs that present SNPs
 
 ==================================================================
 Version: 0.1
@@ -32,6 +32,7 @@ Authors:
   Define pipeline Name
   This will be used as a name to include in the results and intermediates directory names
 */
+
 pipeline_name = "nf-compare-miRNome"
 
 /*This directories will be automatically created by the pipeline to store files during the run
@@ -43,30 +44,25 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 
 /* MODULE START */
 
-/* PRE1_CONVERT_GFF_TO_BED */
 
-process COMPARE_TARGETS_TOOLS {
-	tag "$CHR"
+process CAT_TARGETS {
+	tag "$TARGETS"
 
-	publishDir "${intermediates_dir}/compare-tools/",mode:"symlink"
+	publishDir "${results_dir}/cat-targets/",mode:"copy"
 
 	input:
-	tuple val(CHR), file(TSOUT), file(MIRMAP)
-	each BED
-  each Rscript
+	file TARGETS
 
 	output:
-	file "*.png"
-	tuple val(CHR), path("*.tsv"), emit: TSV
+	file "All_targets.tsv"
 
 	shell:
-	"""
-  Rscript --vanilla ${Rscript} ${TSOUT} ${MIRMAP} ${BED} ${CHR}${params.output_name}
+  """
+ cat *.tsv \
+ | grep -P -v "a_Gene_ID\tmiRNA_ID\tUTR_start\tUTR_end\tSite_type\tchrom\ttarget_ID\ttarget" > all.tmp
+ echo "a_Gene_ID\tmiRNA_ID\tUTR_start\tUTR_end\tSite_type\tchrom\ttarget_ID\ttarget" > header.txt
+ cat header.txt all.tmp > All_targets.tsv
 
-	"""
-	stub:
-	"""
-	      touch  targets.${params.output_name}.tsv
-				touch  targets.${params.output_name}.png
+
 	"""
 }

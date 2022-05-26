@@ -255,50 +255,71 @@ Channel
 		.fromPath( "./modules/pos/compare-targets/compare_targets.r" )
 		.set{ R_script_6}
 
+	/* R_script_7*/
+	Channel
+					.fromPath( "./modules/pos/compare-mirnome/compare_mirnome.R" )
+					.set{ R_script_7}
+
+/* R_script_7*/
+Channel
+			.fromPath( "./modules/pos/eulerr-tools/euler.R" )
+			.set{ R_script_8}
+
 	/*	  Import modules */
 
 								/*POS-processing */
-include{CAT_TARGETSCAN as CAT_TARGETSCAN_REF} from './modules/pos/cat-targetscan/main.nf' addParams(output_name: 'All_targets_ref.tsout')
-include{CAT_TARGETSCAN as CAT_TARGETSCAN_ALT} from './modules/pos/cat-targetscan/main.nf' addParams(output_name: 'All_targets_alt.tsout')
-include{CAT_MIRMAP as CAT_MIRMAP_ALT} from './modules/pos/cat-mirmap/main.nf' addParams(output_name: 'All_targets_alt.mirmapout')
-include{CAT_MIRMAP as CAT_MIRMAP_REF} from './modules/pos/cat-mirmap/main.nf' addParams(output_name: 'All_targets_ref.mirmapout')
+include{CAT_TOOLS_TARGETS as CAT_REF_TARGETS} from './modules/pos/cat-tools-targets/main.nf' addParams(output_name: 'All_targets.ref.tsv')
+include{CAT_TOOLS_TARGETS as CAT_ALT_TARGETS} from './modules/pos/cat-tools-targets/main.nf' addParams(output_name: 'All_targets.alt.tsv')
 
 
-include{COMPARE_TARGETS_TOOLS as COMPARE_TOOLS_REF} from './modules/pos/compare-tools/main.nf' addParams(output_name: 'All_targets.ref')
-include{COMPARE_TARGETS_TOOLS as COMPARE_TOOLS_ALT} from './modules/pos/compare-tools/main.nf' addParams(output_name: 'All_targets.alt')
+include{COMPARE_TARGETS_TOOLS as COMPARE_TOOLS_REF} from './modules/pos/compare-tools/main.nf' addParams(output_name: '.ref')
+include{COMPARE_TARGETS_TOOLS as COMPARE_TOOLS_ALT} from './modules/pos/compare-tools/main.nf' addParams(output_name: '.alt')
 
 include{COMPARE_TARGETS} from './modules/pos/compare-targets/main.nf'
 
+include{CAT_TARGETS} from './modules/pos/cat-targets/main.nf'
 
+include{COMPARE_MIRNOME} from './modules/pos/compare-mirnome/main.nf'
+
+include{EULERR_MIRNOME} from './modules/pos/eulerr-tools/main.nf'
 
 /*  main pipeline logic */
 workflow  {
 /* pos-processing */
+// Define function to get chrom
+def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"")}
+
 						// collect targets outputs
-							TARGETSCAN_REF = ts_ref_input
-							TARGETSCAN_ALT = ts_alt_input
+							TARGETSCAN_REF = ts_ref_input.map{file -> tuple(file.baseName, file) }
+							TARGETSCAN_ALT = ts_alt_input.map{ file -> tuple(get_chrom(file), file) }
 
-							MIRMAP_REF = mirmap_ref_input
-							MIRMAP_ALT = mirmap_alt_input
+							MIRMAP_REF = mirmap_ref_input.map{file -> tuple(file.baseName, file) }
+							MIRMAP_ALT = mirmap_alt_input.map{ file -> tuple(get_chrom(file), file) }
 
 
-							// Cat targetScan
-							ALL_TARGETSCAN_REF = CAT_TARGETSCAN_REF(TARGETSCAN_REF.collect())
-							ALL_TARGETSCAN_ALT = CAT_TARGETSCAN_ALT(TARGETSCAN_ALT.collect())
-							 //CAT miRmap
-							ALL_MIRMAP_REF = CAT_MIRMAP_REF(MIRMAP_REF.collect())
-							ALL_MIRMAP_ALT = CAT_MIRMAP_ALT(MIRMAP_ALT.collect())
+							// join channels
+							REF_TARGETS_TOOLS = TARGETSCAN_REF.join(MIRMAP_REF)
+							ALT_TARGETS_TOOLS = TARGETSCAN_ALT.join(MIRMAP_ALT)
+
 						// Merge mirmap and targetscan data
-						 REF_TARGETS = COMPARE_TOOLS_REF(ALL_TARGETSCAN_REF,
-							 															ALL_MIRMAP_REF,
-																						bed_input,
-																						R_script_5)
-						// Merge mirmap and targetscan data
-					  ALT_TARGETS = COMPARE_TOOLS_ALT(ALL_TARGETSCAN_ALT,
-																						ALL_MIRMAP_ALT,
-																						bed_input,
-																								R_script_5)
+						REF_TARGETS = COMPARE_TOOLS_REF(REF_TARGETS_TOOLS, bed_input, R_script_5)
+					  // Merge mirmap and targetscan data
+					  ALT_TARGETS = COMPARE_TOOLS_ALT(ALT_TARGETS_TOOLS, bed_input, R_script_5)
+
+
 						// COMPARE_TARGETS: Compare REF and ALT targets
-						COMPARE_TARGETS(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_6)
+						COMPARE_TARGETS(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_6)
 
+						//CAT TARGETS OUTPUTS
+						CAT_TARGETS(COMPARE_TARGETS.out.CHANGES.collect())
+
+						// PLOT miRNome changes
+						COMPARE_MIRNOME(CAT_TARGETS.out, R_script_7)
+
+						// CAT REF_TARGETS
+						CAT_REF_TARGETS(REF_TARGETS.TSV)
+						// CAT ALT TARGETS
+						CAT_ALT_TARGETS(ALT_TARGETS.TSV)
+						// PLOT TARGET TOOLS
+						EULERR_MIRNOME(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out , R_script_8)
 }

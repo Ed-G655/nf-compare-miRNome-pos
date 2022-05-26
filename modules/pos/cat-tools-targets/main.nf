@@ -45,28 +45,23 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 /* MODULE START */
 
 
-process CAT_MIRMAP {
-	tag "$MIRMAPOUT"
+process CAT_TOOLS_TARGETS {
 
-	publishDir "${results_dir}/cat-targets/",mode:"copy"
+	publishDir "${intermediates_dir}/cat-targets/",mode:"symlink"
 
 	input:
-	file MIRMAPOUT
+	file TARGETS
 
 	output:
 	file "${params.output_name}"
 
 	shell:
   """
- cat *.mirmapout \
- | grep -P -v "GeneID\tmiRNA_ID\tUTR_start\tUTR_end\tSite_type" > all.tmp
- echo "GeneID\tmiRNA_ID\tUTR_start\tUTR_end\tSite_type" > header.txt
- cat header.txt all.tmp > ${params.output_name}
+ cat *.tsv \
+ | grep -P -v "a_Gene_ID\tmiRNA_ID\tUTR_start\tUTR_end\tSite_type\tchrom\ttarget_ID\tprediction_tool" > all.tmp
+ echo "a_Gene_ID\tmiRNA_ID\tUTR_start\tUTR_end\tSite_type\tchrom\ttarget_ID\tprediction_tool" > header.txt
+ cat header.txt all.tmp > "${params.output_name}"
 
 
-	"""
-	stub:
-	"""
-	     touch ${params.output_name}
 	"""
 }
