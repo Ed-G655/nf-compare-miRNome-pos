@@ -18,19 +18,26 @@ args = commandArgs(trailingOnly=TRUE)
 
 #args[2] <- "changes"
 
+## get the mirmap tsv file from args
+mirna_ref_file <- args[1]
 
-All_targets <- args[1] 
+## get targetscan tsv file from args
+mirna_mut_file <- args[2]
 
-mirna_changes <- args[2]
+## pass to named objects
+mirna_changes <- args[3]
 
-All_targets.df <- vroom(All_targets)
+## Read miRNA targets
+mirna_ref.df <- read.table(file= mirna_ref_file, header = T,
+                           sep = "\t", stringsAsFactors = FALSE)
+
+mirna_alt.df <- read.table(file= mirna_mut_file, header = T,
+                           sep = "\t", stringsAsFactors = FALSE)
 
 ## Make a vector with the mirnas targets predicted by both tools
-mirna_ref_intersect.v <- All_targets.df %>% filter(target ==  "lost" | 
-                                                     target ==  "remained" ) %>% pull(target_ID)
+mirna_ref_intersect.v <- mirna_ref.df %>% filter(prediction_tool ==  "both") %>% pull(target_ID)
 
-mirna_alt_intersect.v <- All_targets.df %>% filter(target ==  "gained" | 
-                                                     target ==  "remained" ) %>% pull(target_ID)
+mirna_alt_intersect.v <- mirna_alt.df %>% filter(prediction_tool ==  "both") %>% pull(target_ID)
 
 ## Sort the ids list within a list for ggvenn
 Venn_list <- list(

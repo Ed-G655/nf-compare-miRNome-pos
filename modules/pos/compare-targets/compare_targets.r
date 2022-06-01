@@ -27,7 +27,7 @@ mirna_ref_file <- args[1]
 mirna_mut_file <- args[2]
 
 ## pass to named objects
-mirna_changes <- args[3]
+chromosome <- args[3]
 
 ## Read miRNA targets
 mirna_ref.df <- read.table(file= mirna_ref_file, header = T,
@@ -79,7 +79,7 @@ All_targets.df <- full_join(x = target_changes.df, y = remained_targets.df,
                                    "chrom") )
 
 ## Save dataframe
-write.table(All_targets.df, file = str_interp("${mirna_changes}.tsv"), sep = "\t", na = "NA", quote = F, row.names = F)
+write.table(All_targets.df, file = str_interp("${chromosome}.changes.tsv"), sep = "\t", na = "NA", quote = F, row.names = F)
 
 
 
@@ -100,14 +100,11 @@ max <- count_lost_gains.df$Number_of_Targets %>% max()
 quartile <- abs(count_lost_gains.df$Number_of_Targets) %>%  max()/4
 quartile <- ceiling(quartile)
 
-chromosomes.v <- count_lost_gains.df %>% ungroup() %>%  pull(chrom) %>% unique()
 
-lapply(chromosomes.v, function(chroms) {
-  
   piramide.p <- ggplot(count_lost_gains.df, aes(x = miRNA_ID, y = Number_of_Targets, fill = target )) + 
-    geom_col(data = subset(count_lost_gains.df, target == "lost" & chrom == chroms), 
+    geom_col(data = subset(count_lost_gains.df, target == "lost"), 
              width = 0.5, fill = "#F94144") + 
-    geom_col(data = subset(count_lost_gains.df, target ==  "gained" & chrom == chroms), 
+    geom_col(data = subset(count_lost_gains.df, target ==  "gained"), 
              width = 0.5, fill = "springgreen3") +
     coord_flip() + scale_y_continuous(
       breaks = c(seq(min, 0, by = quartile), 
@@ -119,17 +116,15 @@ lapply(chromosomes.v, function(chroms) {
     labs(title = "Sitos blanco por miRNA y sus cambios debido a mutaciones en el miRNA") +
     theme_minimal() 
   
-  ggsave( filename = str_interp("${chroms}_changes.png"), 
+  ggsave( filename = str_interp("${chromosome}_changes.png"), 
           plot = piramide.p,
           device = "png",
           height = 7, width = 14,
           units = "in")
-})
 
 
 # plot gain, lost and remain targets  
-lapply(chromosomes.v, function(chroms) {
-gain_and_lost.p <- ggplot(subset(count_changes.df,  chrom == chroms), aes(x = miRNA_ID, 
+gain_and_lost.p <- ggplot(subset(count_changes.df), aes(x = miRNA_ID, 
                                                 y = Number_of_Targets, 
                                                      fill = target)) + 
   geom_bar(position = "stack", stat = "identity") + theme_cowplot() +
@@ -143,9 +138,8 @@ gain_and_lost.p <- ggplot(subset(count_changes.df,  chrom == chroms), aes(x = mi
                                "gained" = "#70c875",
                                "remained" = "#7570c8"))
 
-ggsave( filename =str_interp("${chroms}_barplot.png"),
+ggsave( filename =str_interp("${chromosome}_barplot.png"),
         plot = gain_and_lost.p,
         device = "png",
         height = 14, width = 28,
         units = "in")
-})

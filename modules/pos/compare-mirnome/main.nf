@@ -46,12 +46,13 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 /* PRE1_CONVERT_GFF_TO_BED */
 
 process COMPARE_MIRNOME {
-	tag "$TARGETS"
+	tag "$REF, $ALT"
 
 	publishDir "${results_dir}/compare-miRNome/", mode:"copy"
 
 	input:
-	file TARGETS
+	file REF
+	file ALT
   file Rscript
 
 	output:
@@ -59,7 +60,7 @@ process COMPARE_MIRNOME {
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript} ${TARGETS} All_changes
+  Rscript --vanilla ${Rscript} ${REF} ${ALT} All_changes
 
 	"""
 

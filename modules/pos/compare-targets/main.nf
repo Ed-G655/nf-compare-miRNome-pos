@@ -60,7 +60,7 @@ process COMPARE_TARGETS {
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript} ${REF} ${ALT} ${CHR}.changes
+  Rscript --vanilla ${Rscript} ${REF} ${ALT} ${CHR}
 
 	"""
 	stub:
