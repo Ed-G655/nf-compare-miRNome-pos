@@ -31,17 +31,17 @@ mirna_changes <- args[3]
 
 ## Read miRNA targets
 mirna_ref.df <- read.table(file= mirna_ref_file, header = T,
-                           sep = "\t", stringsAsFactors = FALSE)
+                           sep = "\t", stringsAsFactors = FALSE) %>% select(target_ID, prediction_tool)
 
 mirna_alt.df <- read.table(file= mirna_mut_file, header = T,
-                           sep = "\t", stringsAsFactors = FALSE)
+                           sep = "\t", stringsAsFactors = FALSE) %>% select(target_ID, prediction_tool)
 
 ## Select mirnas targets predicted by TargetScan
 mirna_ref_targetscan.df <- mirna_ref.df %>% filter(prediction_tool ==  "targetscan" | 
-                                                     prediction_tool == "both") %>% select(target_ID)
+                                                   prediction_tool == "both") %>% select(target_ID)
 
 mirna_mut_targetscan.df <- mirna_alt.df %>% filter(prediction_tool ==  "targetscan" |
-                                                     prediction_tool == "both") %>% select(target_ID)
+                                                   prediction_tool == "both") %>% select(target_ID)
 
 
 ## Select mirnas targets predicted by mirmap
@@ -49,7 +49,7 @@ mirna_ref_mirmap.df <- mirna_ref.df %>% filter(prediction_tool ==  "mirmap" |
                                                  prediction_tool == "both") %>% select(target_ID)
 
 mirna_mut_mirmap.df <- mirna_alt.df %>% filter(prediction_tool ==  "mirmap" |
-                                                 prediction_tool == "both") %>% select(target_ID)
+                                               prediction_tool == "both") %>% select(target_ID)
 
 
 

@@ -277,6 +277,16 @@ include{COMPARE_TARGETS_TOOLS as COMPARE_TOOLS_ALT} from './modules/pos/compare-
 
 include{COMPARE_TARGETS} from './modules/pos/compare-targets/main.nf'
 
+include{GREP_TARGETSID as GREP_TARGETSID_REF } from './modules/pos/grep-targets/main.nf' addParams(output_name: 'targetsID.ref.tsv')
+
+include{GREP_TARGETSID as GREP_TARGETSID_ALT } from './modules/pos/grep-targets/main.nf' addParams(output_name: 'targetsID.alt.tsv')
+
+include{GREP_TOOLS as GREP_TS_REF } from './modules/pos/grep-tools/main.nf' addParams(TOOLS: 'targetscan' , output_name: 'targets_TS.ref.tsv')
+include{GREP_TOOLS as GREP_MP_REF } from './modules/pos/grep-tools/main.nf' addParams(TOOLS: 'mirmap' , output_name: 'targets_MP.ref.tsv')
+
+include{GREP_TOOLS as GREP_TS_ALT } from './modules/pos/grep-tools/main.nf' addParams(TOOLS: 'targetscan' , output_name: 'targets_TS.alt.tsv')
+include{GREP_TOOLS as GREP_MP_ALT } from './modules/pos/grep-tools/main.nf' addParams(TOOLS: 'mirmap' , output_name: 'targets_MP.alt.tsv')
+
 include{COMPARE_MIRNOME} from './modules/pos/compare-mirnome/main.nf'
 
 include{EULERR_MIRNOME} from './modules/pos/eulerr-tools/main.nf'
@@ -316,8 +326,13 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"")}
 						// CAT ALT TARGETS
 						CAT_ALT_TARGETS(ALT_TARGETS.TSV.collect())
 
+						// GREP REF TARGETSID
+						GREP_TARGETSID_REF(CAT_REF_TARGETS.out)
+						// GREP ALT TARGETSID
+						GREP_TARGETSID_ALT(CAT_ALT_TARGETS.out)
+
 						// PLOT miRNome changes
-						COMPARE_MIRNOME(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out, R_script_7)
+						COMPARE_MIRNOME(GREP_TARGETSID_REF.out, GREP_TARGETSID_ALT.out, R_script_7)
 
 						// PLOT TARGET TOOLS
 						EULERR_MIRNOME(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out , R_script_8)

@@ -28,16 +28,20 @@ mirna_mut_file <- args[2]
 mirna_changes <- args[3]
 
 ## Read miRNA targets
-mirna_ref.df <- read.table(file= mirna_ref_file, header = T,
+mirna_ref.df <- read.table(file= mirna_ref_file, header = F,
                            sep = "\t", stringsAsFactors = FALSE)
 
-mirna_alt.df <- read.table(file= mirna_mut_file, header = T,
+mirna_alt.df <- read.table(file= mirna_mut_file, header = F,
                            sep = "\t", stringsAsFactors = FALSE)
+
+names(mirna_ref.df)[1] <- "target_ID"
+names(mirna_alt.df)[1] <- "target_ID"
+
 
 ## Make a vector with the mirnas targets predicted by both tools
-mirna_ref_intersect.v <- mirna_ref.df %>% filter(prediction_tool ==  "both") %>% pull(target_ID)
+mirna_ref_intersect.v <- mirna_ref.df %>% pull(target_ID)
 
-mirna_alt_intersect.v <- mirna_alt.df %>% filter(prediction_tool ==  "both") %>% pull(target_ID)
+mirna_alt_intersect.v <- mirna_alt.df %>% pull(target_ID)
 
 ## Sort the ids list within a list for ggvenn
 Venn_list <- list(
