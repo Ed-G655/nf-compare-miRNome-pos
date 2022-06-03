@@ -265,6 +265,11 @@ Channel
 			.fromPath( "./modules/pos/eulerr-tools/euler.R" )
 			.set{ R_script_8}
 
+/* Python script */
+Channel
+			.fromPath("./modules/pos/Venn_plot/compare_mirnome.py")
+			.set{Python_script}
+
 	/*	  Import modules */
 
 								/*POS-processing */
@@ -290,6 +295,8 @@ include{GREP_TOOLS as GREP_MP_ALT } from './modules/pos/grep-tools/main.nf' addP
 include{COMPARE_MIRNOME} from './modules/pos/compare-mirnome/main.nf'
 
 include{EULERR_MIRNOME} from './modules/pos/eulerr-tools/main.nf'
+
+include{VENN_PLOT} from './modules/pos/Venn_plot/main.nf'
 
 /*  main pipeline logic */
 workflow  {
@@ -320,20 +327,23 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"")}
 
 						//CAT TARGETS OUTPUTS
 						//CAT_TARGETS(COMPARE_TARGETS.out.CHANGES.collect())
-
+						//
 						// CAT REF_TARGETS
 						CAT_REF_TARGETS(REF_TARGETS.TSV.collect())
 						// CAT ALT TARGETS
 						CAT_ALT_TARGETS(ALT_TARGETS.TSV.collect())
-
+						//
 						// GREP REF TARGETSID
 						GREP_TARGETSID_REF(CAT_REF_TARGETS.out)
 						// GREP ALT TARGETSID
 						GREP_TARGETSID_ALT(CAT_ALT_TARGETS.out)
 
 						// PLOT miRNome changes
-						COMPARE_MIRNOME(GREP_TARGETSID_REF.out, GREP_TARGETSID_ALT.out, R_script_7)
+						//COMPARE_MIRNOME(GREP_TARGETSID_REF.out, GREP_TARGETSID_ALT.out, R_script_7)
 
-						// PLOT TARGET TOOLS
-			//		EULERR_MIRNOME(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out , R_script_8)
+						// // PLOT TARGET TOOLS
+			 			// EULERR_MIRNOME(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_8)
+
+						// PLOT miRNome changes
+						VENN_PLOT(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out, Python_script)
 }
