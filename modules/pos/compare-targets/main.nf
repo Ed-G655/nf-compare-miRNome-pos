@@ -55,7 +55,8 @@ process COMPARE_TARGETS {
   each Rscript
 
 	output:
-	path("*.tsv"), emit: CHANGES
+	path "*changes.tsv", emit: CHANGES
+	file "*count.tsv"
 	file "*.png"
 
 	shell:
@@ -66,6 +67,7 @@ process COMPARE_TARGETS {
 	stub:
 	"""
 	      touch  targets.changes.tsv
+				touch  targets.count.tsv
 				touch  targets.changes.png
 	"""
 }

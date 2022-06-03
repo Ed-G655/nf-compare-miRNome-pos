@@ -13,9 +13,9 @@ args = commandArgs(trailingOnly=TRUE)
 ## Uncomment For debugging only
 ## Comment for production mode only
 
-#args[1] <-"22.alt.tsv"
+#args[1] <-"21.ref.tsv"
 
-#args[2] <- "22.ref.tsv"
+#args[2] <- "21.alt.tsv"
 
 #args[3] <- "targets.changes" # output file
 
@@ -85,6 +85,11 @@ write.table(All_targets.df, file = str_interp("${chromosome}.changes.tsv"), sep 
 
 count_changes.df <- All_targets.df %>% group_by(miRNA_ID, chrom, target) %>%
   summarise(Number_of_Targets = n())
+
+
+#Save a dataframe of changes
+write.table(count_changes.df, file = str_interp("${chromosome}.count.tsv"), sep = "\t", na = "NA", quote = F, row.names = F)
+
 
 count_lost_gains.df <- subset(count_changes.df, target == "lost") %>%  mutate(Number_of_Targets = Number_of_Targets*-1) %>%
   rbind(subset(count_changes.df, target == "gained")) %>%  arrange(chrom)
