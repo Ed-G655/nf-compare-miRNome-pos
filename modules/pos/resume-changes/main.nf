@@ -45,23 +45,20 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 
 /* PRE1_CONVERT_GFF_TO_BED */
 
-process COMPARE_MIRNOME {
-	tag "$CHR"
+process RESUME_CHANGES {
 
-	publishDir "${results_dir}/compare-miRNome/", mode:"copy"
+	publishDir "${results_dir}/resume-changes/",mode:"copy"
 
 	input:
-	tuple val(CHR), file (REF), file(ALT)
-  each Rscript
+	file TSV
+  file Rscript
 
 	output:
-	path "*.tsv", emit: VENN_DATA
-	file "*.png"
+	path "*"
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript} ${REF} ${ALT} ${CHR}
+  Rscript --vanilla ${Rscript}
 
 	"""
-
 }

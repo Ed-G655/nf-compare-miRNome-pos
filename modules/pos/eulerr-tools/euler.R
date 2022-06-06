@@ -27,7 +27,7 @@ mirna_ref_file <- args[1]
 mirna_mut_file <- args[2]
 
 ## pass to named objects
-mirna_changes <- args[3]
+chromosome <- args[3]
 
 ## Read miRNA targets
 mirna_ref.df <- read.table(file= mirna_ref_file, header = T,
@@ -37,7 +37,7 @@ mirna_alt.df <- read.table(file= mirna_mut_file, header = T,
                            sep = "\t", stringsAsFactors = FALSE) %>% select(target_ID, prediction_tool)
 
 ## Select mirnas targets predicted by TargetScan
-mirna_ref_targetscan.df <- mirna_ref.df %>% filter(prediction_tool ==  "targetscan" | 
+mirna_ref_targetscan.df <- mirna_ref.df %>% filter(prediction_tool ==  "targetscan" |
                                                    prediction_tool == "both") %>% select(target_ID)
 
 mirna_mut_targetscan.df <- mirna_alt.df %>% filter(prediction_tool ==  "targetscan" |
@@ -45,7 +45,7 @@ mirna_mut_targetscan.df <- mirna_alt.df %>% filter(prediction_tool ==  "targetsc
 
 
 ## Select mirnas targets predicted by mirmap
-mirna_ref_mirmap.df <- mirna_ref.df %>% filter(prediction_tool ==  "mirmap" | 
+mirna_ref_mirmap.df <- mirna_ref.df %>% filter(prediction_tool ==  "mirmap" |
                                                  prediction_tool == "both") %>% select(target_ID)
 
 mirna_mut_mirmap.df <- mirna_alt.df %>% filter(prediction_tool ==  "mirmap" |
@@ -78,9 +78,8 @@ miRNAs_Venn.p <- ggvenn(Venn_list, fill_color = c("#D9ED92", "#99D98C", "#168AAD
 
 
 ## Save plot
-ggsave( filename = str_interp("${mirna_changes}_3.png"),
+ggsave( filename = str_interp("${chromosome}_changes3.png"),
         plot = miRNAs_Venn.p,
         device = "png",
         height = 7, width = 15,
         units = "in")
-

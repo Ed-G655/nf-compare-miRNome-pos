@@ -44,21 +44,20 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 /* MODULE START */
 
 process EULERR_MIRNOME {
-	tag "$REF, $ALT"
+	tag "$CHR"
 
 	publishDir "${results_dir}/compare-miRNome/", mode:"copy"
 
 	input:
-	file REF
-	file ALT
-  file Rscript
+	tuple val(CHR), file (REF), file(ALT)
+  each Rscript
 
 	output:
 	file "*"
 
 	shell:
 	"""
-	  Rscript --vanilla ${Rscript} ${REF} ${ALT} miRNome
+	  Rscript --vanilla ${Rscript} ${REF} ${ALT} ${CHR}
 
  	"""
 
