@@ -42,9 +42,9 @@ mirna_ref_intersect.df <- mirna_ref.df %>% filter(prediction_tool ==  "both")
 mirna_alt_intersect.df <- mirna_alt.df %>% filter(prediction_tool ==  "both")
 
 
-mirna_ref.v <- mirna_ref_intersect.df %>% pull(target_ID)
+mirna_ref.v <- mirna_ref_intersect.df %>% pull(target_ID) %>% unique()
 
-mirna_alt.v <- mirna_alt_intersect.df %>% pull(target_ID)
+mirna_alt.v <- mirna_alt_intersect.df %>% pull(target_ID) %>% unique()
 
 
 #Save venn data on dataframe

@@ -346,13 +346,13 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"")}
 						// GREP_TARGETSID_ALT(CAT_ALT_TARGETS.out)
 
 						// PLOT miRNome changes
-				//		COMPARE_MIRNOME(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_7)
+						COMPARE_MIRNOME(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_7)
 
 						// PLOT TARGET TOOLS
-			 	//		EULERR_MIRNOME(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_8)
+			 			EULERR_MIRNOME(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_8)
 
 						// Sum changes data
-				//		RESUME_CHANGES(COMPARE_MIRNOME.out.VENN_DATA.collect(), R_script_9)
+						RESUME_CHANGES(COMPARE_MIRNOME.out.VENN_DATA.collect(), R_script_9)
 						// // PLOT miRNome changes
 						// VENN_PLOT(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out, Python_script)
 }
