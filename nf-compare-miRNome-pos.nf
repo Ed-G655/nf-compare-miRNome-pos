@@ -265,6 +265,11 @@ Channel
 			.fromPath( "./modules/pos/eulerr-tools/euler.R" )
 			.set{ R_script_8}
 
+/* R_script_7*/
+Channel
+			 .fromPath( "./modules/pos/resume-changes/venn_data.R" )
+			 .set{ R_script_9}
+
 /* Python script */
 Channel
 			.fromPath("./modules/pos/Venn_plot/compare_mirnome.py")
@@ -298,6 +303,8 @@ include{EULERR_MIRNOME} from './modules/pos/eulerr-tools/main.nf'
 
 include{VENN_PLOT} from './modules/pos/Venn_plot/main.nf'
 
+include{RESUME_CHANGES} from './modules/pos/resume-changes/main.nf'
+
 /*  main pipeline logic */
 workflow  {
 /* pos-processing */
@@ -328,22 +335,24 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"")}
 						//CAT TARGETS OUTPUTS
 						//CAT_TARGETS(COMPARE_TARGETS.out.CHANGES.collect())
 						//
-						// CAT REF_TARGETS
-						CAT_REF_TARGETS(REF_TARGETS.TSV.collect())
-						// CAT ALT TARGETS
-						CAT_ALT_TARGETS(ALT_TARGETS.TSV.collect())
+						// // CAT REF_TARGETS
+						// CAT_REF_TARGETS(REF_TARGETS.TSV.collect())
+						// // CAT ALT TARGETS
+						// CAT_ALT_TARGETS(ALT_TARGETS.TSV.collect())
 						//
-						// GREP REF TARGETSID
-						GREP_TARGETSID_REF(CAT_REF_TARGETS.out)
-						// GREP ALT TARGETSID
-						GREP_TARGETSID_ALT(CAT_ALT_TARGETS.out)
+						// // GREP REF TARGETSID
+						// GREP_TARGETSID_REF(CAT_REF_TARGETS.out)
+						// // GREP ALT TARGETSID
+						// GREP_TARGETSID_ALT(CAT_ALT_TARGETS.out)
 
 						// PLOT miRNome changes
-						//COMPARE_MIRNOME(GREP_TARGETSID_REF.out, GREP_TARGETSID_ALT.out, R_script_7)
+						COMPARE_MIRNOME(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_7)
 
-						// // PLOT TARGET TOOLS
-			 			// EULERR_MIRNOME(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_8)
+						// PLOT TARGET TOOLS
+			 			EULERR_MIRNOME(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_8)
 
-						// PLOT miRNome changes
-						VENN_PLOT(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out, Python_script)
+						// Sum changes data
+						RESUME_CHANGES(COMPARE_MIRNOME.out.VENN_DATA.collect(), R_script_9)
+						// // PLOT miRNome changes
+						// VENN_PLOT(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out, Python_script)
 }
