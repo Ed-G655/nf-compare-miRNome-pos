@@ -6,6 +6,8 @@ library("eulerr")
 library("ggvenn")
 library("stringr")
 library("cowplot")
+library("tidyr")
+library("scales")
 
 ## Read args from command line
 args = commandArgs(trailingOnly=TRUE)
@@ -78,72 +80,77 @@ All_targets.df <- full_join(x = target_changes.df, y = remained_targets.df,
                                    "UTR_end", "Site_type", "target", "target_ID", 
                                    "chrom") )
 
-## Save dataframe
-write.table(All_targets.df, file = str_interp("${chromosome}.changes.tsv"), sep = "\t", na = "NA", quote = F, row.names = F)
-
-
-
 count_changes.df <- All_targets.df %>% group_by(miRNA_ID, chrom, target) %>%
   summarise(Number_of_Targets = n())
 
 
-#Save a dataframe of changes
-write.table(count_changes.df, file = str_interp("${chromosome}.count.tsv"), sep = "\t", na = "NA", quote = F, row.names = F)
+count_changes_long.df <- count_changes.df %>% spread(key = target, value = Number_of_Targets)
+
+count_changes_long.df <- count_changes_long.df %>%  mutate(across(everything(), .fns = ~replace_na(.,0))) 
 
 
-count_lost_gains.df <- subset(count_changes.df, target == "lost") %>%  mutate(Number_of_Targets = Number_of_Targets*-1) %>%
-  rbind(subset(count_changes.df, target == "gained")) %>%  arrange(chrom)
+count_changes_long.df <- count_changes_long.df %>% mutate(total_ref_targets = lost + remained)
+
+count_changes_long.df <- count_changes_long.df %>%  mutate( percent_lost = (1/total_ref_targets) * -lost) %>% 
+  mutate( percent_gain = (1/total_ref_targets)*gained) %>% 
+  mutate( percent_remain = (1/total_ref_targets)*remained)
 
 
-count_lost_gains.df <- count_lost_gains.df %>% arrange(-Number_of_Targets)
+count_changes_wide.df <- count_changes_long.df %>% select(-lost, -remained, -total_ref_targets, -gained) %>% 
+  gather(key = "target", value = percent, percent_lost , percent_gain, percent_remain )
+
 
 paleta <- c("lost" =  "#F94144",
             "gained" = "springgreen3") 
 
-min <- count_lost_gains.df$Number_of_Targets %>% min()
-max <- count_lost_gains.df$Number_of_Targets %>% max()
-quartile <- abs(count_lost_gains.df$Number_of_Targets) %>%  max()/4
-quartile <- ceiling(quartile)
-
-
-  piramide.p <- ggplot(count_lost_gains.df, aes(x = miRNA_ID, y = Number_of_Targets, fill = target )) + 
-    geom_col(data = subset(count_lost_gains.df, target == "lost"), 
-             width = 0.5, fill = "#F94144") + 
-    geom_col(data = subset(count_lost_gains.df, target ==  "gained"), 
-             width = 0.5, fill = "springgreen3") +
-    coord_flip() + scale_y_continuous(
-      breaks = c(seq(min, 0, by = quartile), 
-                 seq(0, max, by = quartile)),
-      labels = c(seq(min, 0, by = quartile)*-1, 
-                 seq(0, max, by = quartile))
-    ) + labs(y= "Numero de pares miRNA/blanco", x = "miRNA", color = "Legend") +
+  piramide.p <- ggplot(count_changes_wide.df, aes(x = miRNA_ID, y = percent, fill = target )) + 
+    geom_col(data = subset(count_changes_wide.df, target == "percent_lost"), 
+             width = 1, fill = "#F94144", color = "black", alpha = 0.5) + 
+    geom_col(data = subset(count_changes_wide.df, target ==  "percent_gain"), 
+             width = 1, fill = "springgreen3", color = "black", alpha = 0.5) +
+    coord_flip() +  scale_y_continuous(labels = label_percent()) +
+    labs(y= "Numero de pares miRNA/blanco", x = "miRNA", color = "Legend") +
     scale_color_manual(values = paleta) +
     labs(title = "Sitos blanco por miRNA y sus cambios debido a mutaciones en el miRNA") +
-    theme_minimal() 
+    theme_minimal_grid() 
   
-  ggsave( filename = str_interp("${chromosome}_changes.png"), 
+  ggsave( filename = str_interp("${chromosome}_percent.png"), 
           plot = piramide.p,
           device = "png",
           height = 7, width = 14,
           units = "in")
-
-
+  
+  count_changes_long2.df <- count_changes.df %>% spread(key = target, value = Number_of_Targets)
+  
+  count_changes_long2.df <- count_changes_long.df %>%  mutate(across(everything(), .fns = ~replace_na(.,0))) 
+  
+  count_changes_long2.df <- count_changes_long.df %>% mutate(total_targets = lost + gained + remained)
+  
+  count_changes_long2.df <- count_changes_long2.df %>%  mutate( percent_lost = (lost/total_targets)) %>% 
+    mutate( percent_gain = (gained/total_targets)) %>% 
+    mutate( percent_remain = (remained/total_targets))
+  
+  count_changes_wide2.df <- count_changes_long2.df %>% select(-lost, -remained, -total_ref_targets, -gained) %>% 
+    gather(key = "target", value = percent, percent_lost , percent_gain, percent_remain )
+  
+  
+  
 # plot gain, lost and remain targets  
-gain_and_lost.p <- ggplot(subset(count_changes.df), aes(x = miRNA_ID, 
-                                                y = Number_of_Targets, 
+gain_and_lost.p <- ggplot(subset(count_changes_wide2.df), aes(x = miRNA_ID, 
+                                                y = percent, 
                                                      fill = target)) + 
   geom_bar(position = "stack", stat = "identity") + theme_cowplot() +
   theme(axis.text.x = element_text(angle = 90, size = 8, hjust = 0, vjust = 0 )) + 
-  scale_y_continuous(expand = c(0,0)) +
-  ylab("Numero de pares miRNA/blanco") +
+  scale_y_continuous(labels = label_percent(), expand = c(0,0)) +
+  ylab("Porcentaje de pares miRNA/blanco") +
   xlab("miRNA") +
   labs(title = "Sitos blancos por miRNA y sus cambios debido a mutaciones en el miRNA") +
   labs(fill="Target change") +
-  scale_fill_manual(values = c("lost" = "#c87570",
-                               "gained" = "#70c875",
-                               "remained" = "#7570c8"))
+  scale_fill_manual(values = c("percent_lost" = "#c87570",
+                               "percent_gain" = "#70c875",
+                               "percent_remain" = "#7570c8"))
 
-ggsave( filename =str_interp("${chromosome}_barplot.png"),
+ggsave( filename =str_interp("${chromosome}_barplot_percent.png"),
         plot = gain_and_lost.p,
         device = "png",
         height = 14, width = 28,
