@@ -269,6 +269,10 @@ Channel
 Channel
 			 .fromPath( "./modules/pos/resume-changes/venn_data.R" )
 			 .set{ R_script_9}
+/* R_script_10*/
+Channel
+			 .fromPath( "./modules/pos/compare-targets_percent/compare_targets_percent.r" )
+			 .set{ R_script_10}
 
 /* Python script */
 Channel
@@ -286,6 +290,8 @@ include{COMPARE_TARGETS_TOOLS as COMPARE_TOOLS_REF} from './modules/pos/compare-
 include{COMPARE_TARGETS_TOOLS as COMPARE_TOOLS_ALT} from './modules/pos/compare-tools/main.nf' addParams(output_name: '.alt')
 
 include{COMPARE_TARGETS} from './modules/pos/compare-targets/main.nf'
+
+include{COMPARE_TARGETS_PERCENT} from './modules/pos/compare-targets_percent/main.nf'
 
 include{GREP_TARGETSID as GREP_TARGETSID_REF } from './modules/pos/grep-targets/main.nf' addParams(output_name: 'targetsID.ref.tsv')
 
@@ -332,6 +338,7 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"")}
 						// COMPARE_TARGETS: Compare REF and ALT targets
 						COMPARE_TARGETS(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_6)
 
+						COMPARE_TARGETS_PERCENT(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_10)
 						//CAT TARGETS OUTPUTS
 						//CAT_TARGETS(COMPARE_TARGETS.out.CHANGES.collect())
 						//
