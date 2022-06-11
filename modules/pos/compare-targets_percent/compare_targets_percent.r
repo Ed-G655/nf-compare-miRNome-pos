@@ -105,14 +105,14 @@ paleta <- c("lost" =  "#F94144",
 
   piramide.p <- ggplot(count_changes_wide.df, aes(x = miRNA_ID, y = percent, fill = target )) + 
     geom_col(data = subset(count_changes_wide.df, target == "percent_lost"), 
-             width = 1, fill = "#F94144", color = "black", alpha = 0.5) + 
+             width = 0.5 , fill = "#F94144", color = "black", alpha = 0.5) + 
     geom_col(data = subset(count_changes_wide.df, target ==  "percent_gain"), 
-             width = 1, fill = "springgreen3", color = "black", alpha = 0.5) +
+             width = 0.5 , fill = "springgreen3", color = "black", alpha = 0.5) +
     coord_flip() +  scale_y_continuous(labels = label_percent()) +
     labs(y= "Numero de pares miRNA/blanco", x = "miRNA", color = "Legend") +
     scale_color_manual(values = paleta) +
     labs(title = "Sitos blanco por miRNA y sus cambios debido a mutaciones en el miRNA") +
-    theme_minimal_grid() 
+    theme_minimal_grid() + theme(axis.text.y  = element_text(face="bold", size=5, angle= 30))
   
   ggsave( filename = str_interp("${chromosome}_percent.png"), 
           plot = piramide.p,
@@ -126,9 +126,9 @@ paleta <- c("lost" =  "#F94144",
   
   count_changes_long2.df <- count_changes_long.df %>% mutate(total_targets = lost + gained + remained)
   
-  count_changes_long2.df <- count_changes_long2.df %>%  mutate( percent_lost = (lost/total_targets)) %>% 
-    mutate( percent_gain = (gained/total_targets)) %>% 
-    mutate( percent_remain = (remained/total_targets))
+  count_changes_long2.df <- count_changes_long2.df %>%  mutate( percent_lost = (1 / total_targets)* lost) %>% 
+    mutate( percent_gain = (1/total_targets)*gained) %>% 
+    mutate( percent_remain = (1/total_targets)*remained)
   
   count_changes_wide2.df <- count_changes_long2.df %>% select(-lost, -remained, -total_ref_targets, -gained) %>% 
     gather(key = "target", value = percent, percent_lost , percent_gain, percent_remain )
