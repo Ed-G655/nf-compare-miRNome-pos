@@ -278,6 +278,20 @@ Channel
 Channel
 			.fromPath("./modules/pos/Venn_plot/compare_mirnome.py")
 			.set{Python_script}
+/* R_script_11*/
+Channel
+			 .fromPath( "./modules/pos/compare-genes_percent/compare_genes_percent.r" )
+			 .set{ R_script_11}
+
+/* R_script_12*/
+Channel
+			 .fromPath( "./modules/pos/compare-mirnome_genes/compare_mirnome_genes.R" )
+			 .set{ R_script_12}
+
+/* R_script_13*/
+Channel
+			 .fromPath( "./modules/pos/resume-changes-genes/venn_data_genes.R" )
+			 .set{ R_script_13}
 
 	/*	  Import modules */
 
@@ -310,6 +324,12 @@ include{EULERR_MIRNOME} from './modules/pos/eulerr-tools/main.nf'
 include{VENN_PLOT} from './modules/pos/Venn_plot/main.nf'
 
 include{RESUME_CHANGES} from './modules/pos/resume-changes/main.nf'
+
+include{COMPARE_GENES_PERCENT} from './modules/pos/compare-genes_percent/main.nf'
+
+include{COMPARE_GENES_MIRNOME} from './modules/pos/compare-mirnome_genes/main.nf'
+
+include{RESUME_GENE_CHANGES} from './modules/pos/resume-changes-genes/main.nf'
 
 /*  main pipeline logic */
 workflow  {
@@ -360,6 +380,12 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"")}
 
 						// Sum changes data
 						RESUME_CHANGES(COMPARE_MIRNOME.out.VENN_DATA.collect(), R_script_9)
+						// Compare genes targets
+						COMPARE_GENES_PERCENT(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_11)
+						// Compare miRNome
+						COMPARE_GENES_MIRNOME(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_12)
+						// Compare resume
+						RESUME_GENE_CHANGES(COMPARE_GENES_MIRNOME.out.VENN_DATA.collect(), R_script_13)
 						// // PLOT miRNome changes
 						// VENN_PLOT(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out, Python_script)
 }
