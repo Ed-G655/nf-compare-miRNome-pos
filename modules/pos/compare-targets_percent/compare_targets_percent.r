@@ -63,6 +63,7 @@ lost_targets <- lost_targets %>%  mutate(target = "lost") %>%
   select(-prediction_tool)
 gain_targets <- gain_targets  %>%  mutate(target = "gained") %>% 
   select(-prediction_tool)
+
 remained_targets.df <- remained_targets.df  %>% 
   mutate(target = "remained") %>% 
   select(-prediction_tool)
@@ -133,7 +134,11 @@ paleta <- c("lost" =  "#F94144",
   count_changes_wide2.df <- count_changes_long2.df %>% select(-lost, -remained, -total_ref_targets, -gained) %>% 
     gather(key = "target", value = percent, percent_lost , percent_gain, percent_remain )
   
-  
+  write.table(x = count_changes_long2.df, 
+              file = str_interp("${chromosome}_percent.tsv"), 
+              sep = "\t", 
+              row.names =  F, 
+              col.names = T)
   
 # plot gain, lost and remain targets  
 gain_and_lost.p <- ggplot(subset(count_changes_wide2.df), aes(x = miRNA_ID, 
