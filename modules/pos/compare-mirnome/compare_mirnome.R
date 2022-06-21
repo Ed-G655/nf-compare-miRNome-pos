@@ -14,11 +14,11 @@ args = commandArgs(trailingOnly=TRUE)
 ## Uncomment For debugging only
 ## Comment for production mode only
 
-#args[1] <-"22.ref.tsv"
+#args[1] <-"21.ref.tsv"
 
-#args[2] <- "22.alt.tsv"
+#args[2] <- "21.alt.tsv"
 
-#args[3] <- "22"
+#args[3] <- "21"
 
 ## get the mirmap tsv file from args
 mirna_ref_file <- args[1]
