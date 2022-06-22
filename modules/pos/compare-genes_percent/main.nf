@@ -56,6 +56,7 @@ process COMPARE_GENES_PERCENT {
 
 	output:
 	file "*.png"
+	path "*percent_filtered.tsv", emit: FILTERED_GENES
 
 	shell:
 	"""

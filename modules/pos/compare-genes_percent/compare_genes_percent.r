@@ -89,20 +89,31 @@ count_changes.df <- All_genes.df %>% group_by(miRNA_ID, target) %>%
 
 
 count_changes_long.df <- count_changes.df %>% spread(key = target, value = Number_of_genes)
-
+#Change NAs to 0
 count_changes_long.df <- count_changes_long.df %>%  mutate(across(everything(), .fns = ~replace_na(.,0))) 
 
-
+#Calculate percente
 count_changes_long.df <- count_changes_long.df %>% mutate(total_ref_targets = lost + remained)
 
 count_changes_long.df <- count_changes_long.df %>%  mutate( percent_lost = (1/total_ref_targets) * -lost) %>% 
   mutate( percent_gain = (1/total_ref_targets)*gained) %>% 
   mutate( percent_remain = (1/total_ref_targets)*remained)
 
-
 count_changes_wide.df <- count_changes_long.df %>% select(-lost, -remained, -total_ref_targets, -gained) %>% 
   gather(key = "target", value = percent, percent_lost , percent_gain, percent_remain )
 
+#Filter changes > 25% (0.25)
+filter_changes.df <- count_changes_long.df %>%  filter( percent_lost <= -0.25 | percent_gain > 0.25 )
+
+#Write table
+filter_changes_wide.df<- filter_changes.df %>% select(-lost, -remained, -total_ref_targets, -gained) %>% 
+  gather(key = "target", value = percent, percent_lost , percent_gain, percent_remain )
+
+write.table(x = filter_changes_wide.df, 
+            file = str_interp("${chromosome}_percent_filtered.tsv"), 
+            sep ="\t", 
+            row.names = F,  
+            col.names = T)
 
 paleta <- c("lost" =  "#F94144",
             "gained" = "springgreen3") 
@@ -115,7 +126,7 @@ paleta <- c("lost" =  "#F94144",
     coord_flip() +  scale_y_continuous(labels = label_percent()) +
     labs(y= "Numero de pares miRNA/blanco", x = "miRNA", color = "Legend") +
     scale_color_manual(values = paleta) +
-    labs(title = "Sitos blanco por miRNA y sus cambios debido a mutaciones en el miRNA") +
+    labs(title = "Genes blanco por miRNA y sus cambios debido a mutaciones en el miRNA") +
     theme_minimal_grid() + theme(axis.text.y  = element_text(face="bold", size=5, angle= 30))
   
   ggsave( filename = str_interp("${chromosome}_percent.png"), 
