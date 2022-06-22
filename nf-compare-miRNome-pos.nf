@@ -280,7 +280,7 @@ Channel
 			.set{Python_script}
 /* R_script_11*/
 Channel
-			 .fromPath( "./modules/pos/compare-genes_percent/compare_genes_percent.r" )
+			 .fromPath( "./modules/pos/compare-genes-percent/compare_genes_percent.r" )
 			 .set{ R_script_11}
 
 /* R_script_12*/
@@ -293,10 +293,15 @@ Channel
 			 .fromPath( "./modules/pos/resume-changes-genes/venn_data_genes.R" )
 			 .set{ R_script_13}
 
-/* R_script_13*/
+/* R_script_14*/
 Channel
 			 .fromPath( "./modules/pos/plot-filtered-genes/plot_filtered_genes.R" )
 			 .set{ R_script_14}
+
+/* R_script_15*/
+Channel
+			 .fromPath( "./modules/pos/plot-histogram-genes/plot_histogram_genes.R" )
+			 .set{ R_script_15}
 
 	/*	  Import modules */
 
@@ -330,13 +335,19 @@ include{VENN_PLOT} from './modules/pos/Venn_plot/main.nf'
 
 include{RESUME_CHANGES} from './modules/pos/resume-changes/main.nf'
 
-include{COMPARE_GENES_PERCENT} from './modules/pos/compare-genes_percent/main.nf'
+include{COMPARE_GENES_PERCENT} from './modules/pos/compare-genes-percent/main.nf'
 
 include{COMPARE_GENES_MIRNOME} from './modules/pos/compare-mirnome_genes/main.nf'
 
 include{RESUME_GENE_CHANGES} from './modules/pos/resume-changes-genes/main.nf'
 
 include{PLOT_FILTERED_GENES} from './modules/pos/plot-filtered-genes/main.nf'
+
+include{CAT_PERCENT_GENES} from './modules/pos/cat-percents-genes/main.nf'
+
+include{CAT_PERCENT_GENES as CAT_FILTERED_GENES} from './modules/pos/cat-percents-genes/main.nf'
+
+include{PLOT_HISTOGRAM} from './modules/pos/plot-histogram-genes/main.nf'
 
 /*  main pipeline logic */
 workflow  {
@@ -395,6 +406,11 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"")}
 						RESUME_GENE_CHANGES(COMPARE_GENES_MIRNOME.out.VENN_DATA.collect(), R_script_13)
 						// // PLOT miRNome changes
 						// VENN_PLOT(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out, Python_script)
+						CAT_FILTERED_GENES(COMPARE_GENES_PERCENT.out.FILTERED_GENES.collect())
 						// PLot FILTERED_GENES
-						PLOT_FILTERED_GENES(COMPARE_GENES_PERCENT.out.FILTERED_GENES.collect(), R_script_14)
+						PLOT_FILTERED_GENES(CAT_FILTERED_GENES.out, R_script_14)
+						// CAT UNFILTERED GENES
+						CAT_PERCENT_GENES(COMPARE_GENES_PERCENT.out.UNFILTERED_GENES.collect())
+						// PLOT HISTOGRAM
+						PLOT_HISTOGRAM(CAT_PERCENT_GENES.out, R_script_15)
 }
