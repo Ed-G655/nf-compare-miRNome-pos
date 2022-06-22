@@ -11,6 +11,7 @@ p_load( "vroom",
 filenames <- list.files( pattern="*.tsv" )
 
 venn_data.df <- map_df( filenames, vroom)
+
 #Sum colums
 Total_venn_data.df <- venn_data.df %>%  summarise( total_remain_genes = sum(remain_genes)) %>% 
         bind_cols(venn_data.df %>% summarise( total_lost_genes = sum(lost_genes))) %>% 
