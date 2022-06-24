@@ -44,6 +44,9 @@ ggsave( filename = "miRnome_percent_histogram.png",
 Density <- ggplot(data=changes_data.df, aes(x=percent, group=target, fill=target)) +
   geom_density(adjust=1.5, alpha=.4) +
   labs( x = "percent of miRNA/targets pairs changes") +
+  scale_fill_manual(values = c("percent_lost" = "#c87570",
+                               "percent_gain" = "#70c875",
+                               "percent_remain" = "#7570c8")) +
   scale_x_continuous(labels = label_percent()) +
   theme_minimal_grid()
 
