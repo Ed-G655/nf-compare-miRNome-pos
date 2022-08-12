@@ -45,28 +45,20 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 
 /* PRE1_CONVERT_GFF_TO_BED */
 
-process COMPARE_GENES_PERCENT {
-	tag "$CHR"
+process RESUME_VENN_CHANGES {
 
-	publishDir "${results_dir}/compare-genes/",mode:"copy"
+	publishDir "${results_dir}/resume-venn-changes/",mode:"copy"
 
 	input:
-	tuple val(CHR), file (REF), file(ALT)
-  each Rscript
+	file TSV
+  file Rscript
 
 	output:
-	file "*.png"
-	path "*percent_filtered.tsv", emit: FILTERED_GENES
-	path "*percent.tsv", emit: UNFILTERED_GENES
-	file "*"
+	path "*"
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript} ${REF} ${ALT} ${CHR}
+  Rscript --vanilla ${Rscript}
 
-	"""
-	stub:
-	"""
-				touch  ${CHR}.changes.png
 	"""
 }

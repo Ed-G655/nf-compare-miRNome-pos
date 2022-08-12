@@ -55,7 +55,8 @@ process COMPARE_GENES_MIRNOME {
   each Rscript
 
 	output:
-	path "*.tsv", emit: VENN_DATA
+	path "*mirna_genes.tsv", emit: VENN_DATA
+	path "*venndata_genes.tsv", emit: VENN_DATA_GENES
 	file "*.png"
 
 	shell:

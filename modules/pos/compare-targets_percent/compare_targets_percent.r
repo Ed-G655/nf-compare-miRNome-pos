@@ -69,6 +69,7 @@ remained_targets.df <- remained_targets.df  %>%
   select(-prediction_tool)
 
 
+
 ## Merge the miRNA targets gained and lost into a single dataframe
 target_changes.df <- full_join(x = lost_targets, y = gain_targets,
                                by = c("a_Gene_ID","miRNA_ID", "UTR_start",
@@ -160,3 +161,4 @@ ggsave( filename =str_interp("${chromosome}_barplot_percent.png"),
         device = "png",
         height = 14, width = 28,
         units = "in")
+
