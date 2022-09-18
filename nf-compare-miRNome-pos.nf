@@ -362,13 +362,13 @@ include{PLOT_HISTOGRAM} from './modules/pos/plot-histogram-genes/main.nf'
 workflow  {
 /* pos-processing */
 // Define function to get chrom
-def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"")}
+def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"").replaceAll(/.filtered/,"")}
 
 					// collect targets outputs
-					TARGETSCAN_REF = ts_ref_input.map{file -> tuple(file.baseName, file) }
-					TARGETSCAN_ALT = ts_alt_input.map{ file -> tuple(get_chrom(file), file) }
-
-						MIRMAP_REF = mirmap_ref_input.map{file -> tuple(file.baseName, file) }
+						TARGETSCAN_REF = ts_ref_input.map{file -> tuple(file.baseName.replaceAll(/.filtered/,""), file) }
+						TARGETSCAN_ALT = ts_alt_input.map{ file -> tuple(get_chrom(file), file) }
+TARGETSCAN_REF.view()
+						MIRMAP_REF = mirmap_ref_input.map{ file -> tuple(file.baseName.replaceAll(/.filtered/,""), file) }
 						MIRMAP_ALT = mirmap_alt_input.map{ file -> tuple(get_chrom(file), file) }
 
 
@@ -423,5 +423,5 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"")}
 						// CAT UNFILTERED GENES
 						CAT_PERCENT_GENES(COMPARE_GENES_PERCENT.out.UNFILTERED_GENES.collect())
 						// PLOT HISTOGRAM
-						PLOT_HISTOGRAM(CAT_PERCENT_GENES.out, R_script_15)
+					//	PLOT_HISTOGRAM(CAT_PERCENT_GENES.out, R_script_15)
 }
