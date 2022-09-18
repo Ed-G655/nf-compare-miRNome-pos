@@ -1,7 +1,7 @@
 ##!/usr/bin/env bash
 cd ../
-ref_dir="/bodega/projects/miRNome_project/canonical_transcripts/results/nf-compare-miRNome-results/filter-results/REF"
-alt_dir="/bodega/projects/miRNome_project/canonical_transcripts/results/nf-compare-miRNome-results/filter-results/ALT"
+ref_dir="/bodega/projects/miRNome_project/canonical_transcripts/results/nf-compare-miRNome-results/filter-results/REF/"
+alt_dir="/bodega/projects/miRNome_project/canonical_transcripts/results/nf-compare-miRNome-results/filter-results/ALT/"
 bed="/bodega/projects/miRNome_project/analisis/100GMX/hsa.bed"
 output_directory="$(dirname $ref_dir)/results"
 
