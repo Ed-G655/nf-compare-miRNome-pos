@@ -1,5 +1,6 @@
 
 ## load libraries
+library("pacman")
 library ("dplyr")
 library("ggplot2")
 library("eulerr")
@@ -38,10 +39,10 @@ mirna_alt.df <-read.table(file= mirna_mut_file, header = T,
                            sep = "\t", stringsAsFactors = FALSE)
 
 ## Select mirnas targets predicted by both tools
-mirna_ref_intersect.df <- mirna_ref.df %>% filter(prediction_tool ==  "both") %>% 
+mirna_ref_intersect.df <- mirna_ref.df %>% filter(prediction_tool ==  "both") %>%
   select(a_Gene_ID, miRNA_ID) %>%  unite(col = "gene_mirna", sep = ";")
 
-mirna_alt_intersect.df <- mirna_alt.df %>% filter(prediction_tool ==  "both") %>% 
+mirna_alt_intersect.df <- mirna_alt.df %>% filter(prediction_tool ==  "both") %>%
   select(a_Gene_ID, miRNA_ID) %>%  unite(col = "gene_mirna", sep = ";")
 
 
@@ -56,9 +57,9 @@ Venn_data <- data.frame(  chromosome = c(str_interp("${chromosome}")),
                          lost_mirna_genes = c(mirna_ref.v %>%  setdiff(mirna_alt.v) %>%  length()),
                          gain_mirna_genes = c(mirna_alt.v %>%  setdiff(mirna_ref.v) %>%  length()))
 
-write.table(Venn_data, 
-            file = str_interp("${chromosome}_venndata_mirna_genes.tsv"), 
-            sep = "\t", row.names = F, 
+write.table(Venn_data,
+            file = str_interp("${chromosome}_venndata_mirna_genes.tsv"),
+            sep = "\t", row.names = F,
             col.names = T)
 
 ## Sort the ids list within a list for ggvenn
@@ -84,18 +85,18 @@ ggsave( filename = str_interp("${chromosome}_mirna_genes.png"),
 microRNAs_euler <- euler(Venn_list)
 
 microRNAs_euler.p <- plot( x = microRNAs_euler,
-                           quantities = TRUE,               
+                           quantities = TRUE,
                            main = "miRNA-gene pairs",
-                           fill = c("#FF595E", "#007F5F") )                 
+                           fill = c("#FF595E", "#007F5F") )
 
 # save plot
-ggsave( filename = str_interp("${chromosome}_mirna_genes2.png"),        
-        plot = microRNAs_euler.p,                
-        device = "png",                 
-        height = 7,                     
+ggsave( filename = str_interp("${chromosome}_mirna_genes2.png"),
+        plot = microRNAs_euler.p,
+        device = "png",
+        height = 7,
         width = 14,
         units = "in",
-        dpi = 300 )                
+        dpi = 300 )
 
 ############## Compare Genes ##############
 
@@ -127,18 +128,18 @@ ggsave( filename = str_interp("${chromosome}_changes_genes.png"),
 Genes_euler <- euler(Venn_list)
 
 Genes_euler.p <- plot( x = Genes_euler,
-                           quantities = TRUE,               
+                           quantities = TRUE,
                            main = "microRNA target genes",
-                           fill = c("#FF595E", "#007F5F") )                 
+                           fill = c("#FF595E", "#007F5F") )
 
 # save plot
-ggsave( filename = str_interp("${chromosome}_changes2_genes.png"),        
-        plot = Genes_euler.p,                
-        device = "png",                 
-        height = 7,                     
+ggsave( filename = str_interp("${chromosome}_changes2_genes.png"),
+        plot = Genes_euler.p,
+        device = "png",
+        height = 7,
         width = 14,
         units = "in",
-        dpi = 300 )  
+        dpi = 300 )
 
 
 
@@ -148,8 +149,7 @@ Venn_data_genes <- data.frame(  chromosome = c(str_interp("${chromosome}")),
                           lost_genes = c(genes_ref.v %>%  setdiff(genes_alt.v) %>%  length()),
                           gain_genes = c(genes_alt.v %>%  setdiff(genes_ref.v) %>%  length()))
 
-write.table(Venn_data_genes, 
-            file = str_interp("${chromosome}_venndata_genes.tsv"), 
-            sep = "\t", row.names = F, 
+write.table(Venn_data_genes,
+            file = str_interp("${chromosome}_venndata_genes.tsv"),
+            sep = "\t", row.names = F,
             col.names = T)
-

@@ -47,6 +47,7 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 
 process COMPARE_TARGETS_TOOLS {
 	tag "$CHR"
+	echo true
 
 	publishDir "${intermediates_dir}/compare-tools/",mode:"symlink"
 
@@ -61,6 +62,8 @@ process COMPARE_TARGETS_TOOLS {
 
 	shell:
 	"""
+	echo " \$USER"
+	echo " \$PATH"
   Rscript --vanilla ${Rscript} ${TSOUT} ${MIRMAP} ${BED} ${CHR}${params.output_name}
 
 	"""
