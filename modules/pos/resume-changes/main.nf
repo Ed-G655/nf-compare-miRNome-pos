@@ -58,7 +58,7 @@ process RESUME_CHANGES {
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript}
+  Rscript --vanilla  /usr/local/bin/venn_data.R
 
 	"""
 }

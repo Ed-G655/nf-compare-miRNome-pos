@@ -60,7 +60,7 @@ process COMPARE_MIRNOME {
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript} ${REF} ${ALT} ${CHR}
+  Rscript --vanilla  /usr/local/bin/compare_mirnome.R ${REF} ${ALT} ${CHR}
 
 	"""
 

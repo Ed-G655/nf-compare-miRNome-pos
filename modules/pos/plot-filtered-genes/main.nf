@@ -58,7 +58,7 @@ process  PLOT_FILTERED_GENES {
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript}
+  Rscript --vanilla /usr/local/bin/plot_filtered_genes.R
 
 	"""
 }

@@ -61,7 +61,7 @@ process COMPARE_GENES_MIRNOME {
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript} ${REF} ${ALT} ${CHR}
+  Rscript --vanilla /usr/local/bin/compare_mirnome_genes.R ${REF} ${ALT} ${CHR}
 
 	"""
 

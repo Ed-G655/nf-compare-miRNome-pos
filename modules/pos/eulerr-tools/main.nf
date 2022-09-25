@@ -57,7 +57,7 @@ process EULERR_MIRNOME {
 
 	shell:
 	"""
-	  Rscript --vanilla ${Rscript} ${REF} ${ALT} ${CHR}
+	  Rscript --vanilla /usr/local/bin/euler.R ${REF} ${ALT} ${CHR}
 
  	"""
 

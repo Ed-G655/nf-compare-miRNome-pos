@@ -58,7 +58,7 @@ process  PLOT_HISTOGRAM {
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript}
+  Rscript --vanilla /usr/local/bin/plot_histogram_genes.R
 
 	"""
 }

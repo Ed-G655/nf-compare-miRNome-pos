@@ -61,7 +61,7 @@ process COMPARE_TARGETS {
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript} ${REF} ${ALT} ${CHR}
+  Rscript --vanilla /usr/local/bin/compare_targets.r ${REF} ${ALT} ${CHR}
 
 	"""
 	stub:

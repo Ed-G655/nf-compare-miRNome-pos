@@ -59,7 +59,7 @@ process COMPARE_TARGETS_PERCENT {
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript} ${REF} ${ALT} ${CHR}
+  Rscript --vanilla /usr/local/bin/compare_targets_percent.r ${REF} ${ALT} ${CHR}
 
 	"""
 	stub:

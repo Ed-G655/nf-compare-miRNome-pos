@@ -62,7 +62,7 @@ process COMPARE_GENES_PERCENT {
 
 	shell:
 	"""
-  Rscript --vanilla ${Rscript} ${REF} ${ALT} ${CHR}
+  Rscript --vanilla  /usr/local/bin/compare_genes_percent.r ${REF} ${ALT} ${CHR}
 
 	"""
 	stub:
