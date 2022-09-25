@@ -14,9 +14,9 @@ args = commandArgs(trailingOnly=TRUE)
 
 #args[1] <- "All_targets_ref.tsout"
 
-#args[2] <- "All_targets_ref.mirmapout" 
+#args[2] <- "All_targets_ref.mirmapout"
 
-#args[3] <- "sample.bed" 
+#args[3] <- "sample.bed"
 
 #args[4] <- "output" # output file base name
 
@@ -30,10 +30,10 @@ miRNA_bed   <- args[3]
 
 output_Name <- args[4]
 
-# import targetscan files 
+# import targetscan files
 targetscan.df <- vroom(targetscan)
 
-# import targetscan files 
+# import targetscan files
 mirmap.df <- vroom(mirmap)
 
 
@@ -50,21 +50,21 @@ names(miRNA_bed.df)[8] <- "type"
 
 
 miRNA_bed.df <- miRNA_bed.df %>%  mutate(miRNA_ID = str_c(miRNA_bed.df$mir,
-                                         "(", 
+                                         "(",
                                          miRNA_bed.df$strand,
                                          ")") )
 
 
 miRNA_bed.df <-miRNA_bed.df %>%  select(chrom, miRNA_ID) %>% unique()
 
-targetscan_by_chrom.df <- inner_join(targetscan.df, miRNA_bed.df, by = "miRNA_ID") %>% 
-  select(a_Gene_ID, miRNA_ID, UTR_start, UTR_end, Site_type, chrom)
+targetscan_by_chrom.df <- inner_join(targetscan.df, miRNA_bed.df, by = "miRNA_ID") %>%
+  select(GeneID, miRNA_ID, UTR_start, UTR_end, Site_type, chrom)
 
 mirmap_by_chrom.df <- inner_join(mirmap.df, miRNA_bed.df, by = "miRNA_ID")
 
-names(mirmap_by_chrom.df)[1] <- "a_Gene_ID"
+names(mirmap_by_chrom.df)[1] <- "GeneID"
 
-targetscan_by_chrom.df <- targetscan_by_chrom.df %>%  mutate( target_ID = str_c(targetscan_by_chrom.df$a_Gene_ID,
+targetscan_by_chrom.df <- targetscan_by_chrom.df %>%  mutate( target_ID = str_c(targetscan_by_chrom.df$GeneID,
                                                                                 ";",
                                                                                 targetscan_by_chrom.df$miRNA_ID,
                                                                                 ";",
@@ -75,7 +75,7 @@ targetscan_by_chrom.df <- targetscan_by_chrom.df %>%  mutate( target_ID = str_c(
                                                                                 targetscan_by_chrom.df$Site_type))
 
 
-mirmap_by_chrom.df <- mirmap_by_chrom.df %>%  mutate( target_ID = str_c(mirmap_by_chrom.df$a_Gene_ID,
+mirmap_by_chrom.df <- mirmap_by_chrom.df %>%  mutate( target_ID = str_c(mirmap_by_chrom.df$GeneID,
                                                                         ";",
                                                                         mirmap_by_chrom.df$miRNA_ID,
                                                                         ";",
@@ -127,16 +127,15 @@ targetscan_differ.df <- targetscan_differ.df %>%  mutate(prediction_tool = "targ
 
 ## Merge the miRNA targets ids that differ into a single dataframe
 targets_differ.df <- full_join(x = mirmap_differ.df, y = targetscan_differ.df,
-                               by = c("a_Gene_ID", "miRNA_ID", "UTR_start",
-                                      "UTR_end",  "Site_type", "chrom", 
+                               by = c("GeneID", "miRNA_ID", "UTR_start",
+                                      "UTR_end",  "Site_type", "chrom",
                                       "target_ID", "prediction_tool") )
 
 ## Merge all miRNA targets ids into a single dataframe
 All_targets.df <- full_join(x = targets_intersect.df, y = targets_differ.df,
-                            by = c("a_Gene_ID", "miRNA_ID", "UTR_start",
-                                   "UTR_end",  "Site_type", "chrom", 
+                            by = c("GeneID", "miRNA_ID", "UTR_start",
+                                   "UTR_end",  "Site_type", "chrom",
                                    "target_ID", "prediction_tool") )
 
 ## Save dataframe
 write.table(All_targets.df, file = str_interp("${output_Name}.tsv"), sep = "\t", na = "NA", quote = F, row.names = F)
-
