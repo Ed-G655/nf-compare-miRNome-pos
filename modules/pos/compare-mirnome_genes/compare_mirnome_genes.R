@@ -40,10 +40,10 @@ mirna_alt.df <-read.table(file= mirna_mut_file, header = T,
 
 ## Select mirnas targets predicted by both tools
 mirna_ref_intersect.df <- mirna_ref.df %>% filter(prediction_tool ==  "both") %>%
-  select(a_Gene_ID, miRNA_ID) %>%  unite(col = "gene_mirna", sep = ";")
+  select(GeneID, miRNA_ID) %>%  unite(col = "gene_mirna", sep = ";")
 
 mirna_alt_intersect.df <- mirna_alt.df %>% filter(prediction_tool ==  "both") %>%
-  select(a_Gene_ID, miRNA_ID) %>%  unite(col = "gene_mirna", sep = ";")
+  select(GeneID, miRNA_ID) %>%  unite(col = "gene_mirna", sep = ";")
 
 
 mirna_ref.v <- mirna_ref_intersect.df %>% pull(gene_mirna) %>% unique()
@@ -100,9 +100,9 @@ ggsave( filename = str_interp("${chromosome}_mirna_genes2.png"),
 
 ############## Compare Genes ##############
 
-genes_ref.v <- mirna_ref.df %>% filter(prediction_tool ==  "both") %>% pull(a_Gene_ID) %>% unique()
+genes_ref.v <- mirna_ref.df %>% filter(prediction_tool ==  "both") %>% pull(GeneID) %>% unique()
 
-genes_alt.v <- mirna_alt.df %>% filter(prediction_tool ==  "both") %>% pull(a_Gene_ID) %>% unique()
+genes_alt.v <- mirna_alt.df %>% filter(prediction_tool ==  "both") %>% pull(GeneID) %>% unique()
 
 
 ## Sort the ids list within a list for ggvenn
