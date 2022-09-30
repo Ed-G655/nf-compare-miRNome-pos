@@ -423,5 +423,5 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"").replaceAll(/.filte
 						// CAT UNFILTERED GENES
 						CAT_PERCENT_GENES(COMPARE_GENES_PERCENT.out.UNFILTERED_GENES.collect())
 						// PLOT HISTOGRAM
-					//	PLOT_HISTOGRAM(CAT_PERCENT_GENES.out, R_script_15)
+					 	PLOT_HISTOGRAM(CAT_PERCENT_GENES.out, R_script_15)
 }
