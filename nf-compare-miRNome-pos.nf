@@ -367,7 +367,7 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"").replaceAll(/.filte
 					// collect targets outputs
 						TARGETSCAN_REF = ts_ref_input.map{file -> tuple(file.baseName.replaceAll(/.filtered/,""), file) }
 						TARGETSCAN_ALT = ts_alt_input.map{ file -> tuple(get_chrom(file), file) }
-TARGETSCAN_REF.view()
+
 						MIRMAP_REF = mirmap_ref_input.map{ file -> tuple(file.baseName.replaceAll(/.filtered/,""), file) }
 						MIRMAP_ALT = mirmap_alt_input.map{ file -> tuple(get_chrom(file), file) }
 
