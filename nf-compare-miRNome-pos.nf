@@ -365,27 +365,28 @@ workflow  {
 def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"").replaceAll(/.filtered/,"")}
 
 					// collect targets outputs
-						TARGETSCAN_REF = ts_ref_input.map{file -> tuple(file.baseName.replaceAll(/.filtered/,""), file) }
-						TARGETSCAN_ALT = ts_alt_input.map{ file -> tuple(get_chrom(file), file) }
+						// TARGETSCAN_REF = ts_ref_input.map{file -> tuple(file.baseName.replaceAll(/.filtered/,""), file) }
+						TARGETSCAN_REF = ts_ref_input
+						TARGETSCAN_ALT = ts_alt_input
 
-						MIRMAP_REF = mirmap_ref_input.map{ file -> tuple(file.baseName.replaceAll(/.filtered/,""), file) }
-						MIRMAP_ALT = mirmap_alt_input.map{ file -> tuple(get_chrom(file), file) }
+						MIRMAP_REF = mirmap_ref_input
+						MIRMAP_ALT = mirmap_alt_input
 
 
 						// join channels
-						REF_TARGETS_TOOLS = TARGETSCAN_REF.join(MIRMAP_REF)
-						ALT_TARGETS_TOOLS = TARGETSCAN_ALT.join(MIRMAP_ALT)
-
-						// Merge mirmap and targetscan data
-						REF_TARGETS = COMPARE_TOOLS_REF(REF_TARGETS_TOOLS, bed_input, R_script_5)
-					  // Merge mirmap and targetscan data
-					  ALT_TARGETS = COMPARE_TOOLS_ALT(ALT_TARGETS_TOOLS, bed_input, R_script_5)
-
-
-						// COMPARE_TARGETS: Compare REF and ALT targets
-						COMPARE_TARGETS(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_6)
-
-						COMPARE_TARGETS_PERCENT(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_10)
+						REF_TARGETS_TOOLS = TARGETSCAN_REF.mix(MIRMAP_REF)
+						ALT_TARGETS_TOOLS = TARGETSCAN_ALT.mix(MIRMAP_ALT)
+						//
+						// // Merge mirmap and targetscan data
+						REF_TARGETS = COMPARE_TOOLS_REF(REF_TARGETS_TOOLS.collect(), bed_input, R_script_5)
+					  // // Merge mirmap and targetscan data
+					  ALT_TARGETS = COMPARE_TOOLS_ALT(ALT_TARGETS_TOOLS.collect(), bed_input, R_script_5)
+						//
+						//
+						// // COMPARE_TARGETS: Compare REF and ALT targets
+						COMPARE_TARGETS(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_6)
+						//
+						COMPARE_TARGETS_PERCENT(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_10)
 						//CAT TARGETS OUTPUTS
 						//CAT_TARGETS(COMPARE_TARGETS.out.CHANGES.collect())
 						//
@@ -400,17 +401,17 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"").replaceAll(/.filte
 						// GREP_TARGETSID_ALT(CAT_ALT_TARGETS.out)
 
 						// PLOT miRNome changes
-						COMPARE_MIRNOME(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_7)
+						COMPARE_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_7)
 
 						// PLOT TARGET TOOLS
-			 			EULERR_MIRNOME(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_8)
-
-						// Sum changes data
+			 			EULERR_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_8)
+						//
+						// // Sum changes data
 						RESUME_CHANGES(COMPARE_MIRNOME.out.VENN_DATA.collect(), R_script_9)
 						// Compare genes targets
-						COMPARE_GENES_PERCENT(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_11)
+						COMPARE_GENES_PERCENT(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_11)
 						// Compare miRNome
-						COMPARE_GENES_MIRNOME(REF_TARGETS.TSV.join(ALT_TARGETS.TSV), R_script_12)
+						COMPARE_GENES_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_12)
 						// Compare resume
 						RESUME_GENE_CHANGES(COMPARE_GENES_MIRNOME.out.VENN_DATA.collect(), R_script_13)
 

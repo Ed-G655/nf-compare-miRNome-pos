@@ -46,22 +46,22 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 /* PRE1_CONVERT_GFF_TO_BED */
 
 process COMPARE_TARGETS_TOOLS {
-	tag "$CHR"
+	tag "$TSOUT"
 
 	publishDir "${intermediates_dir}/compare-tools/",mode:"symlink"
 
 	input:
-	tuple val(CHR), file(TSOUT), file(MIRMAP)
+	file(TSOUT)
 	each BED
   each Rscript
 
 	output:
 	file "*.png"
-	tuple val(CHR), path("*.tsv"), emit: TSV
+	path("*.tsv"), emit: TSV
 
 	shell:
 	"""
-  Rscript --vanilla /usr/local/bin/compare_tools.r ${TSOUT} ${MIRMAP} ${BED} ${CHR}${params.output_name}
+  Rscript --vanilla /usr/local/bin/compare_tools.r ${BED} compare_tools${params.output_name}
 
 	"""
 	stub:

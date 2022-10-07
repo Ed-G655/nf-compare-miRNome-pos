@@ -46,12 +46,13 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 /* PRE1_CONVERT_GFF_TO_BED */
 
 process COMPARE_GENES_MIRNOME {
-	tag "$CHR"
+	tag "$REF, $ALT"
 
 	publishDir "${results_dir}/compare-miRNome-genes/", mode:"copy"
 
 	input:
-	tuple val(CHR), file (REF), file(ALT)
+	file (REF)
+	file (ALT)
   each Rscript
 
 	output:
@@ -61,7 +62,7 @@ process COMPARE_GENES_MIRNOME {
 
 	shell:
 	"""
-  Rscript --vanilla /usr/local/bin/compare_mirnome_genes.R ${REF} ${ALT} ${CHR}
+  Rscript --vanilla /usr/local/bin/compare_mirnome_genes.R ${REF} ${ALT} compare_genes_mirnome
 
 	"""
 

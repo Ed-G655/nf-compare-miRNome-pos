@@ -1,10 +1,18 @@
+# Cargamos pacman
+library( "pacman" )
 
-## load libraries
-library("dplyr")
-library("ggplot2")
-library("ggvenn")
-library("vroom")
-library("stringr")
+# cargamos mas paquetes
+p_load( "vroom",
+        "dplyr",
+        "ggplot2",
+        "purrr",
+        "stringr",
+        "ggvenn")
+
+# Cargamos todos los tsv en un solo dataframe
+filenames_targetscan <- list.files( pattern="*.tsout" )
+
+filenames_mirmap <- list.files( pattern="*.mirmapout" )
 
 ## Read args from command line
 args = commandArgs(trailingOnly=TRUE)
@@ -12,29 +20,21 @@ args = commandArgs(trailingOnly=TRUE)
 ## Uncomment For debugging only
 ## Comment for production mode only
 
-#args[1] <- "All_targets_ref.tsout"
+#args[1] <- "sample.bed"
 
-#args[2] <- "All_targets_ref.mirmapout"
+#args[2] <- "output" # output file base name
 
-#args[3] <- "sample.bed"
+## pass to named objects
 
-#args[4] <- "output" # output file base name
+miRNA_bed   <- args[1]
 
-
-## pass to named objects\
-targetscan  <- args[1]
-
-     mirmap <- args[2]
-
-miRNA_bed   <- args[3]
-
-output_Name <- args[4]
+output_Name <- args[2]
 
 # import targetscan files
-targetscan.df <- vroom(targetscan)
+targetscan.df <- map_df(filenames_targetscan, vroom)
 
 # import targetscan files
-mirmap.df <- vroom(mirmap)
+mirmap.df <- map_df(filenames_mirmap, vroom)
 
 
 #Open miRNA BED

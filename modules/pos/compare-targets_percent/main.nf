@@ -46,12 +46,13 @@ intermediates_dir = "${params.output_dir}/${pipeline_name}-intermediate/"
 /* PRE1_CONVERT_GFF_TO_BED */
 
 process COMPARE_TARGETS_PERCENT {
-	tag "$CHR"
+	tag "$REF"
 
 	publishDir "${results_dir}/compare-targets/",mode:"copy"
 
 	input:
-	tuple val(CHR), file (REF), file(ALT)
+	file (REF)
+	file (ALT)
   each Rscript
 
 	output:
@@ -59,7 +60,7 @@ process COMPARE_TARGETS_PERCENT {
 
 	shell:
 	"""
-  Rscript --vanilla /usr/local/bin/compare_targets_percent.r ${REF} ${ALT} ${CHR}
+  Rscript --vanilla /usr/local/bin/compare_targets_percent.r ${REF} ${ALT} compare_targets_percent
 
 	"""
 	stub:

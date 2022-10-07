@@ -1,4 +1,4 @@
-a_Gene_ID	miRNA_ID	species_ID	MSA_start	MSA_end	UTR_start	UTR_end	Group_num	Site_type	miRNA in this species	Group_type	Species_in_this_group	Species_in_this_group_with_this_site_type	ORF_overlap
+GeneID	miRNA_ID	species_ID	MSA_start	MSA_end	UTR_start	UTR_end	Group_num	Site_type	miRNA in this species	Group_type	Species_in_this_group	Species_in_this_group_with_this_site_type	ORF_overlap
 ENST00000623903.3_ut3_2_0_21_5026611_f(+)	hsa-miR-6817-5p(+)	9606	15	20	15	20	1	6mer	x	6mer	9606		0
 ENST00000623903.3_ut3_3_0_21_5027935_f(+)	hsa-miR-1249-5p(-)	9606	39	44	39	44	2	6mer	x	6mer	9606		0
 ENST00000623903.3_ut3_3_0_21_5027935_f(+)	hsa-miR-1306-3p(+)	9606	94	99	94	99	3	6mer	x	6mer	9606		0
