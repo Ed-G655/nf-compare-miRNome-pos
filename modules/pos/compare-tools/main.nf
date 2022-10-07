@@ -56,7 +56,7 @@ process COMPARE_TARGETS_TOOLS {
   each Rscript
 
 	output:
-	file "*.png"
+//	file "*.png"
 	path("*.tsv"), emit: TSV
 
 	shell:
