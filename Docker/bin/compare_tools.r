@@ -87,28 +87,28 @@ mirmap_by_chrom.df <- mirmap_by_chrom.df %>%  mutate( target_ID = str_c(mirmap_b
 
 
 ## Make a list with the unique IDs
-IDs_mirmap.v <- mirmap_by_chrom.df  %>%  pull(target_ID) %>%  unique()
+#IDs_mirmap.v <- mirmap_by_chrom.df  %>%  pull(target_ID) %>%  unique()
 
-IDs_targetscan.v <- targetscan_by_chrom.df %>%  pull(target_ID) %>%  unique()
+#IDs_targetscan.v <- targetscan_by_chrom.df %>%  pull(target_ID) %>%  unique()
 
 ## Sort the ids list within a list for ggvenn
-Venn_list <- list(
-  A = IDs_mirmap.v,
-  B = IDs_targetscan.v)
+#Venn_list <- list(
+#  A = IDs_mirmap.v,
+#  B = IDs_targetscan.v)
 
 ## Name the source of the ids
 names(Venn_list) <- c("miRmap","TargetScan")
 
 ## Ṕlot a Venn diagram
-miRNAs_Venn.p <- ggvenn(Venn_list, fill_color = c("#EE6352", "#59CD90"),
-                        stroke_size = 0.5, set_name_size = 4 , text_size = 4)
+#miRNAs_Venn.p <- ggvenn(Venn_list, fill_color = c("#EE6352", "#59CD90"),
+#                        stroke_size = 0.5, set_name_size = 4 , text_size = 4)
 
 ## Save plot
-ggsave( filename =str_interp("${output_Name}.png"),
-        plot = miRNAs_Venn.p,
-        device = "png",
-        height = 7, width = 14,
-        units = "in")
+#ggsave( filename =str_interp("${output_Name}.png"),
+#        plot = miRNAs_Venn.p,
+#        device = "png",
+#        height = 7, width = 14,
+#        units = "in")
 
 ## Get mirna targets present in both tools
 targets_intersect.df <- intersect(targetscan_by_chrom.df, mirmap_by_chrom.df)
