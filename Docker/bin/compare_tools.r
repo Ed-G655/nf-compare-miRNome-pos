@@ -97,7 +97,7 @@ mirmap_by_chrom.df <- mirmap_by_chrom.df %>%  mutate( target_ID = str_c(mirmap_b
 #  B = IDs_targetscan.v)
 
 ## Name the source of the ids
-names(Venn_list) <- c("miRmap","TargetScan")
+#names(Venn_list) <- c("miRmap","TargetScan")
 
 ## Ṕlot a Venn diagram
 #miRNAs_Venn.p <- ggvenn(Venn_list, fill_color = c("#EE6352", "#59CD90"),
