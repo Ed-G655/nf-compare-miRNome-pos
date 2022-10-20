@@ -385,44 +385,44 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"").replaceAll(/.filte
 						//
 						// // COMPARE_TARGETS: Compare REF and ALT targets
 						COMPARE_TARGETS(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_6)
+						// //
+						// COMPARE_TARGETS_PERCENT(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_10)
+						// //CAT TARGETS OUTPUTS
+						// //CAT_TARGETS(COMPARE_TARGETS.out.CHANGES.collect())
+						// //
+						// // // CAT REF_TARGETS
+						// // CAT_REF_TARGETS(REF_TARGETS.TSV.collect())
+						// // // CAT ALT TARGETS
+						// // CAT_ALT_TARGETS(ALT_TARGETS.TSV.collect())
+						// //
+						// // // GREP REF TARGETSID
+						// // GREP_TARGETSID_REF(CAT_REF_TARGETS.out)
+						// // // GREP ALT TARGETSID
+						// // GREP_TARGETSID_ALT(CAT_ALT_TARGETS.out)
 						//
-						COMPARE_TARGETS_PERCENT(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_10)
-						//CAT TARGETS OUTPUTS
-						//CAT_TARGETS(COMPARE_TARGETS.out.CHANGES.collect())
-						//
-						// // CAT REF_TARGETS
-						// CAT_REF_TARGETS(REF_TARGETS.TSV.collect())
-						// // CAT ALT TARGETS
-						// CAT_ALT_TARGETS(ALT_TARGETS.TSV.collect())
-						//
-						// // GREP REF TARGETSID
-						// GREP_TARGETSID_REF(CAT_REF_TARGETS.out)
-						// // GREP ALT TARGETSID
-						// GREP_TARGETSID_ALT(CAT_ALT_TARGETS.out)
-
-						// PLOT miRNome changes
-						COMPARE_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_7)
-
-						// PLOT TARGET TOOLS
-			 			EULERR_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_8)
-						//
-						// // Sum changes data
-						RESUME_CHANGES(COMPARE_MIRNOME.out.VENN_DATA.collect(), R_script_9)
-						// Compare genes targets
-						COMPARE_GENES_PERCENT(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_11)
-						// Compare miRNome
-						COMPARE_GENES_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_12)
-						// Compare resume
-						RESUME_GENE_CHANGES(COMPARE_GENES_MIRNOME.out.VENN_DATA.collect(), R_script_13)
-
-						RESUME_VENN_CHANGES(COMPARE_GENES_MIRNOME.out.VENN_DATA_GENES.collect(), R_script_16)
 						// // PLOT miRNome changes
-						// VENN_PLOT(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out, Python_script)
-						CAT_FILTERED_GENES(COMPARE_GENES_PERCENT.out.FILTERED_GENES.collect())
-						// PLot FILTERED_GENES
-						PLOT_FILTERED_GENES(CAT_FILTERED_GENES.out, R_script_14)
-						// CAT UNFILTERED GENES
-						CAT_PERCENT_GENES(COMPARE_GENES_PERCENT.out.UNFILTERED_GENES.collect())
-						// PLOT HISTOGRAM
-					 	PLOT_HISTOGRAM(CAT_PERCENT_GENES.out, R_script_15)
+						// COMPARE_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_7)
+						//
+						// // PLOT TARGET TOOLS
+			 			// EULERR_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_8)
+						// //
+						// // // Sum changes data
+						// RESUME_CHANGES(COMPARE_MIRNOME.out.VENN_DATA.collect(), R_script_9)
+						// // Compare genes targets
+						// COMPARE_GENES_PERCENT(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_11)
+						// // Compare miRNome
+						// COMPARE_GENES_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_12)
+						// // Compare resume
+						// RESUME_GENE_CHANGES(COMPARE_GENES_MIRNOME.out.VENN_DATA.collect(), R_script_13)
+						//
+						// RESUME_VENN_CHANGES(COMPARE_GENES_MIRNOME.out.VENN_DATA_GENES.collect(), R_script_16)
+						// // // PLOT miRNome changes
+						// // VENN_PLOT(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out, Python_script)
+						// CAT_FILTERED_GENES(COMPARE_GENES_PERCENT.out.FILTERED_GENES.collect())
+						// // PLot FILTERED_GENES
+						// PLOT_FILTERED_GENES(CAT_FILTERED_GENES.out, R_script_14)
+						// // CAT UNFILTERED GENES
+						// CAT_PERCENT_GENES(COMPARE_GENES_PERCENT.out.UNFILTERED_GENES.collect())
+						// // PLOT HISTOGRAM
+					 	// PLOT_HISTOGRAM(CAT_PERCENT_GENES.out, R_script_15)
 }
