@@ -385,24 +385,24 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"").replaceAll(/.filte
 						//
 						// // COMPARE_TARGETS: Compare REF and ALT targets
 						COMPARE_TARGETS(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_6)
-						// //
-						// COMPARE_TARGETS_PERCENT(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_10)
-						// //CAT TARGETS OUTPUTS
-						// //CAT_TARGETS(COMPARE_TARGETS.out.CHANGES.collect())
-						// //
-						// // // CAT REF_TARGETS
-						// // CAT_REF_TARGETS(REF_TARGETS.TSV.collect())
-						// // // CAT ALT TARGETS
-						// // CAT_ALT_TARGETS(ALT_TARGETS.TSV.collect())
-						// //
-						// // // GREP REF TARGETSID
-						// // GREP_TARGETSID_REF(CAT_REF_TARGETS.out)
-						// // // GREP ALT TARGETSID
-						// // GREP_TARGETSID_ALT(CAT_ALT_TARGETS.out)
 						//
-						// // PLOT miRNome changes
-						// COMPARE_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_7)
+						COMPARE_TARGETS_PERCENT(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_10)
+						//CAT TARGETS OUTPUTS
+						//CAT_TARGETS(COMPARE_TARGETS.out.CHANGES.collect())
 						//
+						// // CAT REF_TARGETS
+						// CAT_REF_TARGETS(REF_TARGETS.TSV.collect())
+						// // CAT ALT TARGETS
+						// CAT_ALT_TARGETS(ALT_TARGETS.TSV.collect())
+						//
+						// // GREP REF TARGETSID
+						// GREP_TARGETSID_REF(CAT_REF_TARGETS.out)
+						// // GREP ALT TARGETSID
+						// GREP_TARGETSID_ALT(CAT_ALT_TARGETS.out)
+
+						// PLOT miRNome changes
+						COMPARE_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_7)
+
 						// // PLOT TARGET TOOLS
 			 			// EULERR_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_8)
 						// //
