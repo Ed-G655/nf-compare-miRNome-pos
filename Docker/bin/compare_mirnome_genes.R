@@ -172,9 +172,9 @@ write.table(Venn_data_genes,
 
 
 #Write lost and gain genes
-genes_ref.df <- mirna_ref_intersect.df %>%  select(GeneID) %>% unique()
+genes_ref.df <- mirna_ref.df %>% filter(prediction_tool ==  "both") %>%  select(GeneID) %>% unique()
 
-genes_alt.df  <- mirna_alt_intersect.df %>% select(GeneID) %>% unique()
+genes_alt.df  <- mirna_alt.df %>% filter(prediction_tool ==  "both") %>%  select(GeneID) %>% unique()
 
 lost_mirna_genes.df <- genes_ref.df %>%   setdiff(genes_alt.df)
 
