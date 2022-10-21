@@ -57,7 +57,7 @@ process COMPARE_MIRNOME {
 
 	output:
 	path "*.tsv", emit: VENN_DATA
-	file "*.png"
+	file "*"
 
 	shell:
 	"""

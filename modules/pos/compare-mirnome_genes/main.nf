@@ -58,7 +58,7 @@ process COMPARE_GENES_MIRNOME {
 	output:
 	path "*mirna_genes.tsv", emit: VENN_DATA
 	path "*venndata_genes.tsv", emit: VENN_DATA_GENES
-	file "*.png"
+	file "*"
 
 	shell:
 	"""

@@ -45,7 +45,23 @@ mirna_ref_intersect.df <- mirna_ref.df %>% filter(prediction_tool ==  "both") %>
 mirna_alt_intersect.df <- mirna_alt.df %>% filter(prediction_tool ==  "both") %>%
   select(GeneID, miRNA_ID) %>%  unite(col = "gene_mirna", sep = ";")
 
+ #Write lost and gain gene targets
+lost_targets.df <- mirna_ref_intersect.df %>%   setdiff(mirna_alt_intersect.df)
 
+gain_targets.df <- mirna_alt_intersect.df %>%  setdiff(mirna_ref_intersect.df)
+
+write.table(lost_mirna_genes.df,
+            file = str_interp("lost_targets.tsv"),
+            sep = "\t", row.names = F,
+            col.names = T)
+
+write.table(gain_mirna_genes.df,
+            file = str_interp("gain_targets.tsv"),
+            sep = "\t", row.names = F,
+            col.names = T)
+
+
+#### Write vectors to count diferences
 mirna_ref.v <- mirna_ref_intersect.df %>% pull(gene_mirna) %>% unique()
 
 mirna_alt.v <- mirna_alt_intersect.df %>% pull(gene_mirna) %>% unique()
@@ -71,15 +87,15 @@ Venn_list <- list(
 names(Venn_list) <- c("Lost miRNA-gene pairs","Gain miRNA-gene pairs")
 
 ## Ṕlot a Venn diagram
-miRNAs_Venn.p <- ggvenn(Venn_list, fill_color = c("#FF595E", "#007F5F"),
-                        stroke_size = 0.5, set_name_size = 4 , text_size = 4)
+#miRNAs_Venn.p <- ggvenn(Venn_list, fill_color = c("#FF595E", "#007F5F"),
+#                        stroke_size = 0.5, set_name_size = 4 , text_size = 4)
 
 ## Save plot
-ggsave( filename = str_interp("${chromosome}_mirna_genes.png"),
-        plot = miRNAs_Venn.p,
-        device = "png",
-        height = 7, width = 14,
-        units = "in")
+#ggsave( filename = str_interp("${chromosome}_mirna_genes.png"),
+#        plot = miRNAs_Venn.p,
+#        device = "png",
+#        height = 7, width = 14,
+#        units = "in")
 
 ## Make eulerr plot
 microRNAs_euler <- euler(Venn_list)
@@ -114,15 +130,15 @@ Venn_list <- list(
 names(Venn_list) <- c("Lost target genes","Gain target genes")
 
 ## Ṕlot a Venn diagram
-Genes_Venn.p <- ggvenn(Venn_list, fill_color = c("#FF595E", "#007F5F"),
-                        stroke_size = 0.5, set_name_size = 4 , text_size = 4)
+#Genes_Venn.p <- ggvenn(Venn_list, fill_color = c("#FF595E", "#007F5F"),
+#                        stroke_size = 0.5, set_name_size = 4 , text_size = 4)
 
 ## Save plot
-ggsave( filename = str_interp("${chromosome}_changes_genes.png"),
-        plot = Genes_Venn.p,
-        device = "png",
-        height = 7, width = 14,
-        units = "in")
+#ggsave( filename = str_interp("${chromosome}_changes_genes.png"),
+#        plot = Genes_Venn.p,
+#        device = "png",
+#        height = 7, width = 14,
+#        units = "in")
 
 ## Make eulerr plot
 Genes_euler <- euler(Venn_list)
@@ -153,3 +169,24 @@ write.table(Venn_data_genes,
             file = str_interp("${chromosome}_venndata_genes.tsv"),
             sep = "\t", row.names = F,
             col.names = T)
+
+
+#Write lost and gain genes
+genes_ref.df <- mirna_ref_intersect.df %>% filter(prediction_tool ==  "both") %>% select(GeneID) %>% unique()
+
+genes_alt.df  <- mirna_alt_intersect.df %>% filter(prediction_tool ==  "both") %>% select(GeneID) %>% unique()
+
+lost_mirna_genes.df <- genes_ref.df %>%   setdiff(genes_alt.df)
+
+gain_mirna_genes.df <- genes_alt.df %>%  setdiff(genes_ref.df)
+
+write.table(lost_mirna_genes.df,
+            file = str_interp("lost_mirna_genes.tsv"),
+            sep = "\t", row.names = F,
+            col.names = T)
+
+write.table(gain_mirna_genes.df,
+            file = str_interp("gain_mirna_genes.tsv"),
+            sep = "\t", row.names = F,
+            col.names = T)
+
