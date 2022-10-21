@@ -411,11 +411,11 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"").replaceAll(/.filte
 						// Compare genes targets
 						COMPARE_GENES_PERCENT(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_11)
 						// // Compare miRNome
-						// COMPARE_GENES_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_12) //
+						COMPARE_GENES_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_12) //
 						// // Compare resume
-						// RESUME_GENE_CHANGES(COMPARE_GENES_MIRNOME.out.VENN_DATA.collect(), R_script_13)
+						RESUME_GENE_CHANGES(COMPARE_GENES_MIRNOME.out.VENN_DATA.collect(), R_script_13)
 						//
-						// RESUME_VENN_CHANGES(COMPARE_GENES_MIRNOME.out.VENN_DATA_GENES.collect(), R_script_16)
+						RESUME_VENN_CHANGES(COMPARE_GENES_MIRNOME.out.VENN_DATA_GENES.collect(), R_script_16)
 						// // // PLOT miRNome changes
 						// // VENN_PLOT(CAT_REF_TARGETS.out, CAT_ALT_TARGETS.out, Python_script)
 						// CAT_FILTERED_GENES(COMPARE_GENES_PERCENT.out.FILTERED_GENES.collect())
