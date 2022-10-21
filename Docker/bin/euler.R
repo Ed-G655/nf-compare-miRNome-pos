@@ -72,14 +72,32 @@ Venn_list <- list(
 ## Name the source of the ids
 names(Venn_list) <- c("REF_TargetScan","REF_miRmap","MUT_TargetScan","MUT_miRmap")
 
+## Make eulerr plot
+microRNAs_euler <- euler(Venn_list)
+
+microRNAs_euler.p <- plot( x = microRNAs_euler,
+                           quantities = TRUE,               
+                           main = "microRNAS iDs",
+                           fill = c("#FF595E", "#007F5F") )                 
+
+# save plot
+ggsave( filename = str_interp("compare_tools.png"),        
+        plot = microRNAs_euler.p,                
+        device = "png",                 
+        height = 7,                     
+        width = 14,
+        units = "in",
+        dpi = 300 )                    
+
+
 ## Ṕlot a Venn diagram
-miRNAs_Venn.p <- ggvenn(Venn_list, fill_color = c("#D9ED92", "#99D98C", "#168AAD", "#1E6091"),
-                        stroke_size = 0.5, set_name_size = 4 , text_size = 4)
+#miRNAs_Venn.p <- ggvenn(Venn_list, fill_color = c("#D9ED92", "#99D98C", "#168AAD", "#1E6091"),
+#                        stroke_size = 0.5, set_name_size = 4 , text_size = 4)
 
 
 ## Save plot
-ggsave( filename = str_interp("${chromosome}_changes3.png"),
-        plot = miRNAs_Venn.p,
-        device = "png",
-        height = 7, width = 15,
-        units = "in")
+#ggsave( filename = str_interp("${chromosome}_changes3.png"),
+ #       plot = miRNAs_Venn.p,
+  #      device = "png",
+   #     height = 7, width = 15,
+    #    units = "in")
