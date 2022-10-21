@@ -50,12 +50,12 @@ lost_targets.df <- mirna_ref_intersect.df %>%   setdiff(mirna_alt_intersect.df)
 
 gain_targets.df <- mirna_alt_intersect.df %>%  setdiff(mirna_ref_intersect.df)
 
-write.table(lost_mirna_genes.df,
+write.table(lost_targets.df,
             file = str_interp("lost_targets.tsv"),
             sep = "\t", row.names = F,
             col.names = T)
 
-write.table(gain_mirna_genes.df,
+write.table(gain_targets.df,
             file = str_interp("gain_targets.tsv"),
             sep = "\t", row.names = F,
             col.names = T)
