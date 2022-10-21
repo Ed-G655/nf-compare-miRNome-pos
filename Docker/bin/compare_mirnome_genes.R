@@ -181,12 +181,12 @@ lost_mirna_genes.df <- genes_ref.df %>%   setdiff(genes_alt.df)
 gain_mirna_genes.df <- genes_alt.df %>%  setdiff(genes_ref.df)
 
 write.table(lost_mirna_genes.df,
-            file = str_interp("lost_mirna_genes.tsv"),
+            file = str_interp("lost_mirna_genes_pairs.tsv"),
             sep = "\t", row.names = F,
             col.names = T)
 
 write.table(gain_mirna_genes.df,
-            file = str_interp("gain_mirna_genes.tsv"),
+            file = str_interp("gain_mirna_genes_pairs.tsv"),
             sep = "\t", row.names = F,
             col.names = T)
 
