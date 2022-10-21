@@ -405,11 +405,11 @@ def get_chrom = { file -> file.baseName.replaceAll(/.alt/,"").replaceAll(/.filte
 
 						// PLOT TARGET TOOLS
 			 			EULERR_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_8)
-						//
-						// // Sum changes data
-						// RESUME_CHANGES(COMPARE_MIRNOME.out.VENN_DATA.collect(), R_script_9)
-						// // Compare genes targets
-						// COMPARE_GENES_PERCENT(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_11)
+
+						// Sum changes data
+						RESUME_CHANGES(COMPARE_MIRNOME.out.VENN_DATA.collect(), R_script_9)
+						// Compare genes targets
+						COMPARE_GENES_PERCENT(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_11)
 						// // Compare miRNome
 						// COMPARE_GENES_MIRNOME(REF_TARGETS.TSV, ALT_TARGETS.TSV, R_script_12) //
 						// // Compare resume
